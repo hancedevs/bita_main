@@ -299,7 +299,7 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
                         <Icon className={`w-4 h-4 ${selectedVehicle === vehicle ? "text-brand-red" : "text-black/40 dark:text-white/40"}`} />
                         <span className="text-sm font-bold text-black dark:text-white">{VEHICLE_LABELS[vehicle]}</span>
                       </div>
-                      <div className="text-2xl font-black text-black dark:text-white">${quote.price}</div>
+                      <div className="text-2xl font-black text-black dark:text-white">ETB {quote.price.toFixed(2)}</div>
                       <div className="flex items-center gap-1 text-xs text-black/40 dark:text-white/40 mt-1">
                         Est. {VEHICLE_TIMES[vehicle]}
                       </div>
@@ -310,7 +310,7 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
 
               <div className="flex items-start gap-2 text-xs text-black/30 dark:text-white/30">
                 <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>Price includes delivery and handling. Breakdown: Base fare ${selectedQuote.breakdown.baseFare} + Distance charge ${selectedQuote.breakdown.distanceCharge}</span>
+                <span>Price includes delivery and handling. Breakdown: Base fare ETB {selectedQuote.breakdown.baseFare.toFixed(2)} + Distance charge ETB {selectedQuote.breakdown.distanceCharge.toFixed(2)}</span>
               </div>
             </div>
           )}

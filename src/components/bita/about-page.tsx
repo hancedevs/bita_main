@@ -346,7 +346,7 @@ export function AboutPage() {
                 icon: Ship,
                 title: "International Express",
                 desc: "Door-to-door express delivery to 200+ countries with real-time tracking and customs clearance included.",
-                detail: "From $18/kg",
+                detail: "From ETB 18/kg",
               },
               {
                 icon: Truck,

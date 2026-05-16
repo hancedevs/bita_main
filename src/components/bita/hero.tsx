@@ -287,7 +287,7 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                                   {VEHICLE_LABELS[vehicle]}
                                 </span>
                               </div>
-                              <div className="text-xl font-bold text-black dark:text-white">${quote.price}</div>
+                              <div className="text-xl font-bold text-black dark:text-white">ETB {quote.price.toFixed(2)}</div>
                               <div className="text-xs text-black/40 dark:text-white/40 mt-0.5">
                                 Est. {VEHICLE_TIMES[vehicle]}
                               </div>
