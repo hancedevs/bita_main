@@ -16,6 +16,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { reportIssue, clearIssueReport, IssueType } from "@/store/issuesSlice";
 
@@ -150,27 +151,29 @@ export function SupportPage() {
                       <span className="font-semibold text-brand-red">{t("ethiopia")}</span>
                       <br />{t("ethiopiaAddress")}
                       <br />{t("ethiopiaAddress2")}
-                      <a
-                        href="https://maps.app.goo.gl/x9jbcQRoTU1VMGAz5"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block mt-2 text-xs font-semibold text-brand-red hover:text-brand-red-dark transition-colors"
-                      >
-                        {t("getDirections")}
-                      </a>
+                      <Button asChild variant="link" className="h-auto p-0 text-xs font-semibold text-brand-red hover:text-brand-red-dark mt-2">
+                        <a
+                          href="https://maps.app.goo.gl/x9jbcQRoTU1VMGAz5"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t("getDirections")}
+                        </a>
+                      </Button>
                     </div>
                     <div className="text-sm font-medium text-black/70 dark:text-white/70">
                       <span className="font-semibold text-brand-red">{t("china")}</span>
                       <br />{t("chinaAddress")}
                       <br />{t("chinaAddress2")}
-                      <a
-                        href="https://maps.app.goo.gl/Ky2b9QQGMbiCvT1Z9"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block mt-2 text-xs font-semibold text-brand-red hover:text-brand-red-dark transition-colors"
-                      >
-                        {t("getDirections")}
-                      </a>
+                      <Button asChild variant="link" className="h-auto p-0 text-xs font-semibold text-brand-red hover:text-brand-red-dark mt-2">
+                        <a
+                          href="https://maps.app.goo.gl/Ky2b9QQGMbiCvT1Z9"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t("getDirections")}
+                        </a>
+                      </Button>
                     </div>
                   </div>
                 ),
@@ -193,13 +196,14 @@ export function SupportPage() {
                 <p className="text-xs text-black/35 dark:text-white/35 mt-0.5">
                   {item.sub}
                 </p>
-                <a
-                  href={item.action}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-brand-red hover:text-brand-red-dark mt-4 transition-colors"
-                >
-                  {item.actionLabel}{" "}
-                  <ArrowRight className="w-3 h-3" />
-                </a>
+                {item.actionLabel && (
+                  <Button asChild variant="outline" className="w-full mt-4 border-brand-red text-brand-red hover:bg-brand-red hover:text-white transition-all duration-300 rounded-xl">
+                    <a href={item.action} className="flex items-center justify-center gap-2">
+                      {item.actionLabel}
+                      <ArrowRight className="w-4 h-4" />
+                    </a>
+                  </Button>
+                )}
               </div>
             ))}
           </div>
@@ -383,7 +387,7 @@ export function SupportPage() {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-                    {t("description")} *
+                    {t("descriptionLabel")} *
                   </label>
                   <textarea
                     rows={4}

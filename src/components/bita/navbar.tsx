@@ -17,7 +17,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { useTranslations, useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/routing";
 
-export type PageView = "home" | "about" | "support";
+export type PageView = "home" | "about" | "support" | "terms" | "privacy" | "carrier";
 
 interface NavbarProps {
   currentPage: PageView;

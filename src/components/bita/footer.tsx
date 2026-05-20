@@ -196,7 +196,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                 </li>
                 <li>
                   <button
-                    onClick={() => toast("Privacy policy...")}
+                    onClick={() => navigateTo("privacy")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
                     {t("privacy")}
@@ -204,10 +204,18 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                 </li>
                 <li>
                   <button
-                    onClick={() => toast("Terms...")}
+                    onClick={() => navigateTo("terms")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
                     {t("terms")}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigateTo("carrier")}
+                    className="text-sm text-white/30 hover:text-brand-red transition-colors"
+                  >
+                    {t("carrier")}
                   </button>
                 </li>
               </ul>
@@ -241,8 +249,8 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className={`fixed bottom-6 left-6 z-50 w-10 h-10 bg-brand-red text-white rounded-full shadow-lg flex items-center justify-center hover:bg-brand-red-dark transition-all ${showScrollTop
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-4 pointer-events-none"
+          ? "opacity-100 translate-y-0 pointer-events-auto"
+          : "opacity-0 translate-y-4 pointer-events-none"
           }`}
       >
         <ChevronUp className="w-5 h-5" />

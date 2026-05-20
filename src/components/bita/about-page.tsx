@@ -14,22 +14,72 @@ import {
   Warehouse,
   ClipboardCheck,
   MapPin,
+  Star,
 } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const galleryImages = [
+  {
+    url: "/assets/arlind-photography-7z1sdaLl4wM-unsplash.jpg",
+    title: "Global Logistics",
+  },
+  {
+    url: "/assets/bernd-dittrich-3jtEN0ZxT4Y-unsplash.jpg",
+    title: "Air Freight",
+  },
+  {
+    url: "/assets/rifki-kurniawan-k63Or81F8-M-unsplash.jpg",
+    title: "Fleet Operations",
+  },
+  {
+    url: "/assets/rowan-freeman-clYlmCaQbzY-unsplash.jpg",
+    title: "Warehousing",
+  },
+];
 
 export function AboutPage() {
   const t = useTranslations("AboutPage");
+  const [api, setApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (!api) return;
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [api]);
+
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500">
       {/* Hero Banner */}
       <section className="relative overflow-hidden py-20 md:py-28">
         {/* Map Background Image */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 map-bg-light dark:hidden" />
-          <div className="absolute inset-0 map-bg-dark hidden dark:block" />
+        <div className="absolute inset-0 bg-white dark:bg-black">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.2] dark:opacity-[0.4]"
+            poster="https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=2070&auto=format&fit=crop"
+          >
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-commercial-airplane-in-flight-at-sunset-10023-large.mp4" type="video/mp4" />
+          </video>
           {/* Light mode: white frosted overlay */}
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] dark:hidden" />
-          {/* Dark mode: reduced overlay to show map */}
-          <div className="absolute inset-0 bg-black/35 hidden dark:block" />
+          {/* Dark mode: stark contrast overlay */}
+          <div className="absolute inset-0 bg-black/60 hidden dark:block" />
           {/* Subtle red radial glow */}
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-red rounded-full blur-[200px] opacity-[0.06] dark:opacity-[0.08] pointer-events-none" />
         </div>
@@ -113,6 +163,40 @@ export function AboutPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Culture & Operations Gallery Slider */}
+      <section className="py-0 overflow-hidden w-full">
+        <Carousel
+          setApi={setApi}
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-0">
+            {galleryImages.map((image, index) => (
+              <CarouselItem key={index} className="pl-0 basis-full md:basis-1/2 lg:basis-1/3">
+                <div className="relative group overflow-hidden h-[250px] md:h-[350px]">
+                  <img
+                    src={image.url}
+                    alt={image.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
+                  <div className="absolute bottom-10 left-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                    <h4 className="text-white text-2xl font-black tracking-tight">{image.title}</h4>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="absolute bottom-10 right-10 flex gap-2">
+            <CarouselPrevious className="relative left-0 translate-y-0 bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-brand-red hover:border-brand-red size-12" />
+            <CarouselNext className="relative right-0 translate-y-0 bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-brand-red hover:border-brand-red size-12" />
+          </div>
+        </Carousel>
       </section>
 
       {/* Mission & Vision */}
@@ -362,6 +446,91 @@ export function AboutPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews & Testimonials Section */}
+      <section id="reviews" className="py-20 md:py-32 bg-black/[0.02] dark:bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Heading & Info */}
+            <div>
+              <span className="inline-block text-[11px] font-semibold tracking-widest uppercase text-brand-red mb-3">
+                {t("reviewsBadge")}
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-black dark:text-white leading-tight tracking-tight">
+                {t("reviewsHeading")}
+              </h2>
+              <div className="mt-8 flex items-center gap-4">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                      <img src={`https://i.pravatar.cc/150?u=${i}`} alt="user" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="w-4 h-4 fill-brand-red text-brand-red" />
+                    ))}
+                  </div>
+                  <p className="text-xs text-black/50 dark:text-white/40 mt-1">
+                    Trusted by 5,000+ customers
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Glass Review Form */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-brand-red/5 rounded-[2rem] blur-3xl -z-10" />
+              <div className="bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl">
+                <h3 className="text-xl font-bold text-black dark:text-white mb-6">
+                  {t("writeReview")}
+                </h3>
+                <form className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-black/40 dark:text-white/40">
+                      {t("yourName")}
+                    </label>
+                    <Input
+                      placeholder={t("yourName")}
+                      className="bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/10 focus:border-brand-red/50 transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-black/40 dark:text-white/40">
+                      {t("ratingLabel")}
+                    </label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          className="text-black/20 dark:text-white/20 hover:text-brand-red transition-colors"
+                        >
+                          <Star className="w-6 h-6" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-black/40 dark:text-white/40">
+                      {t("yourMessage")}
+                    </label>
+                    <Textarea
+                      placeholder={t("reviewPlaceholder")}
+                      className="min-h-[120px] bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/10 focus:border-brand-red/50 transition-all"
+                    />
+                  </div>
+                  <Button className="w-full bg-brand-red hover:bg-black dark:hover:bg-white dark:hover:text-black py-6 text-base font-bold transition-all duration-300">
+                    {t("submitReview")}
+                  </Button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </section>

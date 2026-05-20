@@ -24,6 +24,7 @@ import { AboutPage } from "@/components/bita/about-page";
 import { SupportPage } from "@/components/bita/support-page";
 import { TrackingResult } from "@/components/bita/tracking-result";
 import { BookingModal } from "@/components/bita/booking-modal";
+import { PolicyPages } from "@/components/bita/policy-pages";
 import { VehicleType, PriceResponse } from "@/store/quoteSlice";
 
 export default function Home() {
@@ -176,6 +177,36 @@ export default function Home() {
         />
         <main className="flex-1">
           <SupportPage />
+        </main>
+        <Footer
+          onScrollTo={handleScrollTo}
+          onSwitchTab={handleSwitchTab}
+          onOpenModal={handleOpenModal}
+          onNavigate={handleNavigate}
+        />
+        <PickupModal isOpen={openModal === "pickup"} onClose={handleCloseModal} />
+        <LocationsModal isOpen={openModal === "locations"} onClose={handleCloseModal} />
+        <RestrictedModal isOpen={openModal === "restricted"} onClose={handleCloseModal} />
+        <ClaimModal isOpen={openModal === "claim"} onClose={handleCloseModal} />
+        <BookingModal isOpen={!!bookingQuote} onClose={handleCloseBooking} quoteDetails={bookingQuote} />
+      </div>
+    );
+  }
+
+  // Policy pages (Terms, Privacy, Carrier)
+  if (["terms", "privacy", "carrier"].includes(currentPage)) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white text-black dark:bg-black dark:text-white transition-colors duration-500">
+        <Navbar
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
+          onScrollTo={handleScrollTo}
+        />
+        <main className="flex-1">
+          <PolicyPages
+            view={currentPage as "terms" | "privacy" | "carrier"}
+            onBack={() => handleNavigate("home")}
+          />
         </main>
         <Footer
           onScrollTo={handleScrollTo}

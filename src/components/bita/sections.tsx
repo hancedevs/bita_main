@@ -78,7 +78,7 @@ export function TrustLogos() {
           {t("title")}
         </span>
         {/* Centered white pill strip */}
-        <div className="w-full max-w-5xl mx-auto overflow-hidden rounded-2xl bg-white border border-black/6 shadow-sm px-4 py-3">
+        <div className="w-full max-w-5xl mx-auto overflow-hidden rounded-2xl bg-white/40 dark:bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/10 shadow-sm px-4 py-3">
           <div className="flex gap-12 items-center marquee-track whitespace-nowrap">
             {[...trustLogos, ...trustLogos].map((logo, i) => (
               <img
@@ -137,7 +137,8 @@ export function RoutesSection({ onFillRoute }: { onFillRoute: (from: string, to:
     const fetchRoutes = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://apii.bittaexpress.com/routes");
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+        const response = await fetch(`${baseUrl}/routes`);
         if (!response.ok) throw new Error("Failed to fetch routes");
         const data = await response.json();
         setRoutes(data.data || []);
@@ -654,6 +655,7 @@ export function ServicesSection({ onOpenModal }: { onOpenModal: (modal: string) 
       desc: t("standardDesc"),
       price: t("standardPrice"),
       action: t("actionQuote"),
+      img: "/assets/rowan-freeman-clYlmCaQbzY-unsplash.jpg"
     },
     {
       icon: Truck,
@@ -661,6 +663,7 @@ export function ServicesSection({ onOpenModal }: { onOpenModal: (modal: string) 
       desc: t("economyDesc"),
       price: t("economyPrice"),
       action: t("actionQuote"),
+      img: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?q=80&w=600&auto=format&fit=crop"
     },
     {
       icon: Clock,
@@ -668,6 +671,7 @@ export function ServicesSection({ onOpenModal }: { onOpenModal: (modal: string) 
       desc: t("premiumDesc"),
       price: t("premiumPrice"),
       action: t("actionSchedule"),
+      img: "https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop"
     },
   ];
   return (
@@ -680,11 +684,11 @@ export function ServicesSection({ onOpenModal }: { onOpenModal: (modal: string) 
           <p className="text-sm text-black/40 dark:text-white/40 mt-1">
             {t("subtitle")}
           </p>
-          <div className="grid grid-cols-3 gap-4 mt-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 mt-8 max-w-5xl mx-auto">
             {servicesList.map((svc) => (
               <div
                 key={svc.title}
-                className="service-card bg-white dark:bg-black rounded-2xl border border-black/6 dark:border-white/10 p-6 cursor-pointer"
+                className="group relative bg-white dark:bg-black rounded-3xl border border-black/6 dark:border-white/10 overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
                 onClick={() => {
                   if (svc.title === "Same Day") {
                     onOpenModal("pickup");
@@ -696,20 +700,27 @@ export function ServicesSection({ onOpenModal }: { onOpenModal: (modal: string) 
                   }
                 }}
               >
-                <div className="w-10 h-10 rounded-xl bg-brand-red/8 flex items-center justify-center mb-4">
-                  <svc.icon className="w-5 h-5 text-brand-red" />
+                <div className="h-48 overflow-hidden bg-black/5 dark:bg-white/5">
+                  <img src={svc.img} alt={svc.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
-                <h3 className="text-base font-bold text-black dark:text-white mb-1">
-                  {svc.title}
-                </h3>
-                <p className="text-xs text-black/35 dark:text-white/35 leading-relaxed mb-3">
-                  {svc.desc}
-                </p>
-                <div className="text-sm font-bold text-black dark:text-white">
-                  {svc.price}
-                </div>
-                <div className="flex items-center gap-1 text-xs font-semibold text-brand-red mt-3">
-                  {svc.action} <ArrowRight className="w-3 h-3" />
+                <div className="p-6 relative">
+                  <div className="w-12 h-12 rounded-2xl bg-white dark:bg-zinc-800 shadow-xl border border-black/5 dark:border-white/10 flex items-center justify-center absolute -top-6 right-6 transition-transform group-hover:-translate-y-1">
+                    <svc.icon className="w-6 h-6 text-brand-red" />
+                  </div>
+                  <h3 className="text-lg font-bold text-black dark:text-white mb-2 pr-14">
+                    {svc.title}
+                  </h3>
+                  <p className="text-sm text-black/40 dark:text-white/40 leading-relaxed mb-4">
+                    {svc.desc}
+                  </p>
+                  <div className="pt-4 border-t border-black/5 dark:border-white/10 flex items-center justify-between mt-auto">
+                    <div className="text-sm font-bold text-black dark:text-white">
+                      {svc.price}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-brand-red group-hover:gap-2 transition-all">
+                      {svc.action} <ArrowRight className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

@@ -1,0 +1,1492 @@
+{
+  "info": {
+    "_postman_id": "dscf-core-api-collection-v1",
+    "name": "DSCF Core API",
+    "description": "Complete API collection for DSCF Core engine. Covers authentication, businesses, roles, permissions, user-role assignments, addresses, business types, and file downloads.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints — login, signup, logout, token refresh, and current user.",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email_or_phone\": \"admin@example.com\",\n  \"password\": \"Password1!\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate with email/phone and password. Returns access_token and refresh_token."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json).to.have.property(\"data\");",
+                  "  pm.expect(json.data).to.have.property(\"access_token\");",
+                  "  pm.expect(json.data).to.have.property(\"refresh_token\");",
+                  "});",
+                  "pm.test(\"Save access token\", function () {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.access_token) {",
+                  "    pm.collectionVariables.set(\"accessToken\", json.data.access_token);",
+                  "  }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"email\": \"newuser@example.com\",\n    \"phone\": \"+251911234567\",\n    \"password\": \"Password1!\",\n    \"password_confirmation\": \"Password1!\",\n    \"user_profile_attributes\": {\n      \"first_name\": \"Abebe\",\n      \"last_name\": \"Kebede\",\n      \"date_of_birth\": \"1990-05-15\",\n      \"address\": \"Addis Ababa, Ethiopia\"\n    }\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            },
+            "description": "Register a new user account. Does not require authentication."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json).to.have.property(\"data\");",
+                  "  pm.expect(json.data).to.have.property(\"user\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Exchange a refresh token for a new access token."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has access_token\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"access_token\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Invalidate the current session/token."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Logout successful\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Retrieve the currently authenticated user's profile with roles and permissions."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has user data\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"user\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Businesses",
+      "description": "Business profiles with full CRUD and reviewable workflow (draft → submit → approve/reject/request_modification/resubmit).",
+      "item": [
+        {
+          "name": "List Businesses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/businesses?page=1&per_page=10&order_by=created_at&order_direction=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "10" },
+                { "key": "order_by", "value": "created_at" },
+                { "key": "order_direction", "value": "desc" },
+                { "key": "q[status_eq]", "value": "pending", "disabled": true },
+                { "key": "q[name_cont]", "value": "Trading", "disabled": true },
+                {
+                  "key": "q[tin_number_eq]",
+                  "value": "1234567890",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json).to.have.property(\"data\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Business",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/businesses/my_business",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "my_business"]
+            },
+            "description": "Returns businesses owned by the currently authenticated user."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is successful\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Business by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/businesses/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has business data\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Business",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"business\": {\n    \"name\": \"Bunna Trading PLC\",\n    \"description\": \"Import and export of agricultural commodities\",\n    \"contact_email\": \"info@bunnatrading.et\",\n    \"contact_phone\": \"+251911234567\",\n    \"tin_number\": \"0012345678\",\n    \"business_type_id\": 1\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/businesses",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses"]
+            },
+            "description": "Creates a business in draft status. Owner is automatically set to current_user."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has created business\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "  pm.expect(json.data).to.have.property(\"name\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Business",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"business\": {\n    \"name\": \"Bunna Trading PLC (Updated)\",\n    \"description\": \"Import and export of agricultural commodities — updated\",\n    \"contact_email\": \"contact@bunnatrading.et\",\n    \"contact_phone\": \"+251911234568\",\n    \"tin_number\": \"0012345678\",\n    \"business_type_id\": 1\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/businesses/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "1"]
+            },
+            "description": "Update a business. Only allowed when the business is in 'draft' status."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has updated business\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Business",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/businesses/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["businesses", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Deletion successful\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Review Workflow",
+          "description": "Reviewable workflow actions: draft → submit → approve/reject/request_modification → resubmit.",
+          "item": [
+            {
+              "name": "Submit Business",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/1/submit",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["businesses", "1", "submit"]
+                },
+                "description": "Transitions business from 'draft' to 'pending' review status."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test(\"Submission successful\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Approve Business",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/1/approve",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["businesses", "1", "approve"]
+                },
+                "description": "Approve a business in 'pending' status → transitions to 'approved'."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test(\"Approval successful\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Reject Business",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"review_feedback\": {\n    \"message\": \"The provided TIN number does not match official records.\"\n  }\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/1/reject",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["businesses", "1", "reject"]
+                },
+                "description": "Reject a business in 'pending' status. Requires review_feedback."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test(\"Rejection successful\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Request Modification for Business",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"review_feedback\": {\n    \"message\": \"Please provide a valid business license document.\"\n  }\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/1/request_modification",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["businesses", "1", "request_modification"]
+                },
+                "description": "Request modification on a business in 'pending' status → transitions to 'modify'. Requires review_feedback."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test(\"Modification request successful\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Resubmit Business",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"business\": {\n    \"name\": \"Bunna Trading PLC\",\n    \"description\": \"Updated description after modification request\",\n    \"contact_email\": \"info@bunnatrading.et\",\n    \"contact_phone\": \"+251911234567\",\n    \"tin_number\": \"0012345678\",\n    \"business_type_id\": 1\n  }\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/1/resubmit",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["businesses", "1", "resubmit"]
+                },
+                "description": "Resubmit a business in 'modify' status back to 'pending'. Can update model fields."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test(\"Resubmission successful\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "description": "Role management — full CRUD for roles and nested role-permission assignments.",
+      "item": [
+        {
+          "name": "List Roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/roles?page=1&per_page=10&order_by=created_at&order_direction=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["roles"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "10" },
+                { "key": "order_by", "value": "created_at" },
+                { "key": "order_direction", "value": "desc" },
+                { "key": "q[active_eq]", "value": "true", "disabled": true },
+                { "key": "q[name_cont]", "value": "admin", "disabled": true },
+                { "key": "q[code_eq]", "value": "ADMIN", "disabled": true }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json).to.have.property(\"data\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Role by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/roles/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["roles", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has role data\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "  pm.expect(json.data).to.have.property(\"code\");",
+                  "  pm.expect(json.data).to.have.property(\"permissions\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": {\n    \"code\": \"BUSINESS_MANAGER\",\n    \"name\": \"Business Manager\",\n    \"description\": \"Manages business profiles and related operations\",\n    \"active\": true\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/roles",
+              "host": ["{{baseUrl}}"],
+              "path": ["roles"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has created role\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "  pm.expect(json.data).to.have.property(\"code\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": {\n    \"code\": \"BUSINESS_MANAGER\",\n    \"name\": \"Business Manager (Updated)\",\n    \"description\": \"Manages business profiles, documents and related operations\",\n    \"active\": true\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/roles/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["roles", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has updated role\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/roles/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["roles", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Deletion successful\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Role Permissions",
+          "description": "Assign and remove permissions from a role. Requires 'permissions.manage' permission or super_admin.",
+          "item": [
+            {
+              "name": "List Role Permissions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/roles/1/permissions",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["roles", "1", "permissions"]
+                },
+                "description": "List all permissions currently assigned to the given role."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test(\"Response is successful\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "  pm.expect(json).to.have.property(\"data\");",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Assign Permission to Role",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permission_id\": 1\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/roles/1/permissions",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["roles", "1", "permissions"]
+                },
+                "description": "Assign a permission to a role by permission_id. Requires 'permissions.manage' or super_admin."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 201\", function () {",
+                      "  pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test(\"Permission assigned successfully\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "  pm.expect(json.data).to.have.property(\"role_id\");",
+                      "  pm.expect(json.data).to.have.property(\"permission_id\");",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Remove Permission from Role",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/roles/1/permissions/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["roles", "1", "permissions", "1"]
+                },
+                "description": "Remove a permission from a role. The :id here is the permission_id. Requires 'permissions.manage' or super_admin."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test(\"Permission removed successfully\", function () {",
+                      "  const json = pm.response.json();",
+                      "  pm.expect(json).to.have.property(\"success\", true);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Permissions",
+      "description": "Read-only permissions catalog. Lists all available system permissions.",
+      "item": [
+        {
+          "name": "List Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/permissions?page=1&per_page=50&order_by=resource&order_direction=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["permissions"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "50" },
+                { "key": "order_by", "value": "resource" },
+                { "key": "order_direction", "value": "asc" },
+                { "key": "q[active_eq]", "value": "true", "disabled": true },
+                {
+                  "key": "q[resource_eq]",
+                  "value": "businesses",
+                  "disabled": true
+                },
+                { "key": "q[action_eq]", "value": "manage", "disabled": true },
+                {
+                  "key": "q[engine_eq]",
+                  "value": "dscf_core",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has permissions array\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json).to.have.property(\"data\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Permission by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/permissions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["permissions", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has permission data\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "  pm.expect(json.data).to.have.property(\"code\");",
+                  "  pm.expect(json.data).to.have.property(\"resource\");",
+                  "  pm.expect(json.data).to.have.property(\"action\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "User Roles",
+      "description": "Assign and revoke roles for a specific user. Requires 'roles.assign' permission or super_admin.",
+      "item": [
+        {
+          "name": "List User Roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/roles",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1", "roles"]
+            },
+            "description": "List all roles currently assigned to the given user."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is successful\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json).to.have.property(\"data\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Assign Role to User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role_id\": 1,\n  \"expires_at\": \"2027-01-01T00:00:00Z\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/1/roles",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1", "roles"]
+            },
+            "description": "Assign a role to a user. `expires_at` is optional. Requires 'roles.assign' permission or super_admin."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Role assigned successfully\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"user_id\");",
+                  "  pm.expect(json.data).to.have.property(\"role_id\");",
+                  "  pm.expect(json.data).to.have.property(\"role\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Revoke User Role",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/roles/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1", "roles", "1"]
+            },
+            "description": "Revoke a role from a user. The :id here is the role_id. Requires 'roles.assign' permission or super_admin."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Role revoked successfully\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Addresses",
+      "description": "User address management — scoped to the authenticated user.",
+      "item": [
+        {
+          "name": "List Addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/addresses?page=1&per_page=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["addresses"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "10" },
+                {
+                  "key": "q[address_type_eq]",
+                  "value": "work",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is successful\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Address by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/addresses/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["addresses", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has address data\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": {\n    \"address_type\": \"work\",\n    \"country\": \"Ethiopia\",\n    \"city\": \"Addis Ababa\",\n    \"sub_city\": \"Bole\",\n    \"woreda\": \"03\",\n    \"kebele\": \"10\",\n    \"house_numbers\": \"House No. 342\",\n    \"po_box\": \"1000\",\n    \"latitude\": 9.0054,\n    \"longitude\": 38.7636\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses",
+              "host": ["{{baseUrl}}"],
+              "path": ["addresses"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Address created\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": {\n    \"address_type\": \"home\",\n    \"country\": \"Ethiopia\",\n    \"city\": \"Addis Ababa\",\n    \"sub_city\": \"Kirkos\",\n    \"woreda\": \"07\",\n    \"kebele\": \"02\",\n    \"house_numbers\": \"House No. 15\",\n    \"po_box\": \"2000\",\n    \"latitude\": 9.0107,\n    \"longitude\": 38.753\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/addresses/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["addresses", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Address updated\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Business Types",
+      "description": "Business type catalog — index, show, create, update.",
+      "item": [
+        {
+          "name": "List Business Types",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business_types?page=1&per_page=10&order_by=created_at&order_direction=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["business_types"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "10" },
+                { "key": "order_by", "value": "created_at" },
+                { "key": "order_direction", "value": "desc" },
+                { "key": "q[name_cont]", "value": "Import", "disabled": true }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is successful\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Business Type by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business_types/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["business_types", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has business type data\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "  pm.expect(json.data).to.have.property(\"name\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Business Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"business_type\": {\n    \"name\": \"Import & Export\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/business_types",
+              "host": ["{{baseUrl}}"],
+              "path": ["business_types"]
+            },
+            "description": "Create a new business type. Icon and documents can be uploaded as multipart/form-data."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Business type created\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Business Type",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"business_type\": {\n    \"name\": \"Import & Export (Updated)\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/business_types/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["business_types", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Business type updated\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"success\", true);",
+                  "  pm.expect(json.data).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Files",
+      "description": "File download from MinIO/object storage.",
+      "item": [
+        {
+          "name": "Download File",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/files/some-file-key",
+              "host": ["{{baseUrl}}"],
+              "path": ["files", "some-file-key"]
+            },
+            "description": "Download a file by its storage key. The file_key supports any characters except '/'."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or redirect\", function () {",
+                  "  pm.expect([200, 302]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

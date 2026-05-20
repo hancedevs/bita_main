@@ -165,8 +165,8 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
               <button
                 onClick={() => onSwitchTab("track")}
                 className={`tab-btn text-sm font-semibold pb-3 ${activeTab === "track"
-                    ? "active text-brand-red"
-                    : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
+                  ? "active text-brand-red"
+                  : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
                   }`}
               >
                 {t("track")}
@@ -174,8 +174,8 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
               <button
                 onClick={() => onSwitchTab("quote")}
                 className={`tab-btn text-sm font-semibold pb-3 ${activeTab === "quote"
-                    ? "active text-brand-red"
-                    : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
+                  ? "active text-brand-red"
+                  : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
                   }`}
               >
                 {t("quote")}
