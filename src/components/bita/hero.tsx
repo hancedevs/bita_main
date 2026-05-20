@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   Search,
@@ -16,6 +14,7 @@ import { LocationAutocomplete } from "@/components/ui/location-autocomplete";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchQuotes, selectVehicle, clearQuotes, VehicleType } from "@/store/quoteSlice";
 import { PriceResponse } from "@/store/quoteSlice";
+import { useTranslations } from "next-intl";
 
 interface HeroProps {
   activeTab: "track" | "quote";
@@ -43,19 +42,10 @@ const VEHICLE_ICONS = {
   FOOT: Footprints,
 };
 
-const VEHICLE_LABELS = {
-  MOTORBIKE: "Motorbike",
-  BICYCLE: "Bicycle",
-  FOOT: "Foot",
-};
-
-const VEHICLE_TIMES = {
-  MOTORBIKE: "~30-60 min",
-  BICYCLE: "~1-2 hours",
-  FOOT: "~2-4 hours",
-};
+// Vehicle related constants will be localized within the component using the `t` hook
 
 export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedToBook }: HeroProps) {
+  const t = useTranslations("Hero");
   const dispatch = useAppDispatch();
   const { quotes, selectedVehicle, loading } = useAppSelector((state) => state.quote);
 
@@ -69,7 +59,7 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
   const handleTrack = (e: React.FormEvent) => {
     e.preventDefault();
     if (!trackInput.trim()) {
-      toast("Please enter a tracking number");
+      toast(t("pleaseEnter") || "Please enter a tracking number");
       return;
     }
     if (onTrack) {
@@ -81,11 +71,11 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
 
   const handleGetQuote = () => {
     if (!quoteFrom || !quoteTo) {
-      toast("Select origin and destination");
+      toast(t("selectLocations") || "Select origin and destination");
       return;
     }
     if (!fromCoords || !toCoords) {
-      toast("Please select valid locations from the dropdown");
+      toast(t("selectValidLocations") || "Please select valid locations from the dropdown");
       return;
     }
     dispatch(fetchQuotes({ pickupCoords: fromCoords, deliveryCoords: toCoords }));
@@ -110,15 +100,36 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
   const quickActions = [
     {
       icon: Truck,
-      label: "Schedule a pickup",
-      sublabel: "We come to your door",
+      label: t("schedulePickup"),
+      sublabel: t("scheduleSublabel"),
       onClick: () => onOpenModal("pickup"),
     },
     {
       icon: MapPin,
-      label: "Find a drop-off point",
-      sublabel: "5 locations in Addis Ababa",
+      label: t("findDropoff"),
+      sublabel: t("dropoffSublabel"),
       onClick: () => onOpenModal("locations"),
+    },
+  ];
+
+  const svcList = [
+    {
+      img: "/assets/box.png",
+      title: t("standard"),
+      sub: t("standardPrice"),
+      desc: t("standardDesc"),
+    },
+    {
+      img: "/assets/motter bike.png",
+      title: t("economy"),
+      sub: t("economyPrice"),
+      desc: t("economyDesc"),
+    },
+    {
+      img: "/assets/plane.png",
+      title: t("premium"),
+      sub: t("premiumPrice"),
+      desc: t("premiumDesc"),
     },
   ];
 
@@ -144,31 +155,30 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black dark:text-white leading-[1.1] tracking-tight">
-              Track a shipment
-              <br />
-              or get a quote.
+              {activeTab === "track" ? t("trackHeading") : t("quoteHeading")}
             </h1>
             <p className="text-sm text-black/40 dark:text-white/40 mt-3 leading-relaxed max-w-md">
-              No account needed to track. For quotes, have your origin,
-              destination, and weight ready.
+              {t("subtitle")}
             </p>
 
             <div className="mt-8 flex gap-6 border-b border-black/10 dark:border-white/10 pb-0">
               <button
                 onClick={() => onSwitchTab("track")}
-                className={`tab-btn text-sm font-semibold pb-3 ${
-                  activeTab === "track" ? "active text-brand-red" : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
-                }`}
+                className={`tab-btn text-sm font-semibold pb-3 ${activeTab === "track"
+                    ? "active text-brand-red"
+                    : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
+                  }`}
               >
-                Track Shipment
+                {t("track")}
               </button>
               <button
                 onClick={() => onSwitchTab("quote")}
-                className={`tab-btn text-sm font-semibold pb-3 ${
-                  activeTab === "quote" ? "active text-brand-red" : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
-                }`}
+                className={`tab-btn text-sm font-semibold pb-3 ${activeTab === "quote"
+                    ? "active text-brand-red"
+                    : "text-black/40 dark:text-white/40 hover:text-black/70 dark:hover:text-white/70"
+                  }`}
               >
-                Get a Quote
+                {t("quote")}
               </button>
             </div>
 
@@ -181,7 +191,7 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                       type="text"
                       value={trackInput}
                       onChange={(e) => setTrackInput(e.target.value)}
-                      placeholder="BITA-2024-987654321 or any tracking number"
+                      placeholder={t("trackPlaceholder")}
                       className="track-input w-full pl-11 pr-4 py-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 text-sm focus:outline-none focus:border-brand-red/50 transition-all"
                     />
                   </div>
@@ -189,23 +199,9 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                     type="submit"
                     className="bg-brand-red hover:bg-brand-red-dark text-white px-8 py-4 font-semibold rounded-xl transition-all text-sm flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-brand-red/20"
                   >
-                    Track <ArrowRight className="w-4 h-4" />
+                    {t("trackButton")} <ArrowRight className="w-4 h-4" />
                   </button>
                 </form>
-                {/* <div className="flex items-center gap-4 mt-3">
-                  <button
-                    onClick={() => setTrackInput("BITA-987654321")}
-                    className="text-[11px] text-black/20 dark:text-white/20 hover:text-brand-red transition-colors underline underline-offset-2"
-                  >
-                    Try: BITA-987654321
-                  </button>
-                  <button
-                    onClick={() => toast("Opening multi-track page...")}
-                    className="text-[11px] text-black/30 dark:text-white/30 hover:text-brand-red transition-colors underline underline-offset-2"
-                  >
-                    Track multiple →
-                  </button>
-                </div> */}
               </div>
             )}
 
@@ -218,8 +214,8 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                       setQuoteFrom(val);
                       if (coords) setFromCoords(coords);
                     }}
-                    placeholder="Pickup location"
-                    label="From"
+                    placeholder={t("fromLabel")}
+                    label={t("fromLabel")}
                   />
                   <LocationAutocomplete
                     value={quoteTo}
@@ -227,12 +223,12 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                       setQuoteTo(val);
                       if (coords) setToCoords(coords);
                     }}
-                    placeholder="Delivery location"
-                    label="To"
+                    placeholder={t("toLabel")}
+                    label={t("toLabel")}
                   />
                   <div>
                     <label className="text-[11px] text-black/30 dark:text-white/30 uppercase tracking-wider font-medium mb-1.5 block">
-                      Weight (kg)
+                      {t("weightLabel")} (kg)
                     </label>
                     <input
                       type="number"
@@ -253,10 +249,12 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Calculating...
+                      {t("calculating")}
                     </>
                   ) : (
-                    <>Get Quote <ArrowRight className="w-4 h-4" /></>
+                    <>
+                      {t("calculateButton")} <ArrowRight className="w-4 h-4" />
+                    </>
                   )}
                 </button>
 
@@ -264,33 +262,44 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                   <div className="mt-4">
                     <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-4 mt-2 space-y-3">
                       <div className="text-xs text-black/40 dark:text-white/40 uppercase tracking-wider font-medium">
-                        Estimated Quote
+                        {t("estimatedQuote")}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {(["MOTORBIKE", "BICYCLE", "FOOT"] as const).map((vehicle) => {
-                          const quote = quotes[vehicle];
+                        {(["MOTORBIKE", "BICYCLE", "FOOT"] as const).map((type) => {
+                          const quote = quotes[type];
                           if (!quote) return null;
-                          const Icon = VEHICLE_ICONS[vehicle];
+                          const Icon = VEHICLE_ICONS[type];
+                          const label = t(type.toLowerCase());
+                          const time =
+                            type === "MOTORBIKE"
+                              ? "~30-60 min"
+                              : type === "BICYCLE"
+                                ? "~1-2 hours"
+                                : "~2-4 hours";
+                          const isSelected = selectedVehicle === type;
                           return (
                             <button
-                              key={vehicle}
-                              onClick={() => dispatch(selectVehicle(vehicle))}
-                              className={`bg-black/5 dark:bg-white/5 rounded-lg p-3 text-left transition-all border-2 ${
-                                selectedVehicle === vehicle
-                                  ? "border-brand-red"
-                                  : "border-transparent hover:border-brand-red/30"
-                              }`}
+                              key={type}
+                              onClick={() => dispatch(selectVehicle(type))}
+                              className={`bg-black/5 dark:bg-white/5 rounded-lg p-3 text-left transition-all border-2 ${isSelected ? "border-brand-red" : "border-transparent hover:border-brand-red/30"
+                                }`}
                             >
                               <div className="flex items-center gap-2 mb-1">
-                                <Icon className={`w-4 h-4 ${selectedVehicle === vehicle ? "text-brand-red" : "text-black/40 dark:text-white/40"}`} />
-                                <span className={`text-sm font-medium ${selectedVehicle === vehicle ? "text-brand-red" : "text-black/60 dark:text-white/60"}`}>
-                                  {VEHICLE_LABELS[vehicle]}
+                                <Icon
+                                  className={`w-4 h-4 ${isSelected ? "text-brand-red" : "text-black/40 dark:text-white/40"
+                                    }`}
+                                />
+                                <span
+                                  className={`text-sm font-medium ${isSelected ? "text-brand-red" : "text-black/60 dark:text-white/60"
+                                    }`}
+                                >
+                                  {label}
                                 </span>
                               </div>
-                              <div className="text-xl font-bold text-black dark:text-white">ETB {quote.price.toFixed(2)}</div>
-                              <div className="text-xs text-black/40 dark:text-white/40 mt-0.5">
-                                Est. {VEHICLE_TIMES[vehicle]}
+                              <div className="text-xl font-bold text-black dark:text-white">
+                                ETB {quote.price.toFixed(2)}
                               </div>
+                              <div className="text-xs text-black/40 dark:text-white/40 mt-0.5">{time}</div>
                             </button>
                           );
                         })}
@@ -303,7 +312,7 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                       onClick={handleProceed}
                       className="w-full bg-brand-red hover:bg-brand-red-dark text-white py-2.5 text-sm font-semibold rounded-lg transition-colors mt-1"
                     >
-                      Proceed to Book
+                      {t("proceedToBook")}
                     </button>
                   </div>
                 )}
@@ -341,11 +350,7 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
                 </button>
               ))}
               <div className="grid grid-cols-3 gap-2 pt-2">
-                {[
-                  { img: "/assets/box.png", title: "Standard", sub: "From ETB 18/kg", desc: "1-5 days" },
-                  { img: "/assets/motter bike.png", title: "Economy", sub: "From ETB 12/kg", desc: "5-10 days" },
-                  { img: "/assets/plane.png", title: "Premium", sub: "Same day", desc: "Within hours" },
-                ].map((svc) => (
+                {svcList.map((svc) => (
                   <button
                     key={svc.title}
                     onClick={() => toast(`${svc.title} selected`)}

@@ -5,6 +5,7 @@ import { X, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/store/hooks";
 import { verifyLogin } from "@/store/authSlice";
+import { useTranslations } from "next-intl";
 
 interface OtpModalProps {
   phone: string;
@@ -14,6 +15,7 @@ interface OtpModalProps {
 }
 
 export function OtpModal({ phone, onVerified, onClose, mode }: OtpModalProps) {
+  const t = useTranslations("Auth");
   const dispatch = useAppDispatch();
   const [otp, setOtp] = useState(["", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
@@ -60,17 +62,17 @@ export function OtpModal({ phone, onVerified, onClose, mode }: OtpModalProps) {
   const handleVerify = async () => {
     const code = otp.join("");
     if (code.length < 5) {
-      toast.error("Please enter the full 5-digit code");
+      toast.error(t("otpError"));
       return;
     }
     setLoading(true);
     dispatch(verifyLogin({ phone, otp: code })).then((result) => {
       setLoading(false);
       if (verifyLogin.fulfilled.match(result)) {
-        toast.success(mode === "register" ? "Account verified!" : "Login successful");
+        toast.success(mode === "register" ? t("verified") : t("loginSuccessful"));
         onVerified();
       } else {
-        toast.error(result.payload as string || "Invalid OTP. Please try again.");
+        toast.error(result.payload as string || t("invalidOtp"));
         setOtp(["", "", "", "", ""]);
         inputRefs.current[0]?.focus();
       }
@@ -78,7 +80,7 @@ export function OtpModal({ phone, onVerified, onClose, mode }: OtpModalProps) {
   };
 
   const handleResend = () => {
-    toast.info("Resend code requested");
+    toast.info(t("codeResent"));
     setResendCooldown(30);
   };
 
@@ -98,9 +100,9 @@ export function OtpModal({ phone, onVerified, onClose, mode }: OtpModalProps) {
               <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM9 21a6 6 0 0 1-6-6h12a6 6 0 0 1-6 6z" />
             </svg>
           </div>
-          <h2 className="text-lg font-bold text-black dark:text-white">Verify your phone</h2>
+          <h2 className="text-lg font-bold text-black dark:text-white">{t("otpTitle")}</h2>
           <p className="text-sm text-black/50 dark:text-white/50 mt-2">
-            Enter the 5-digit code sent to<br />
+            {t("otpDescription")}<br />
             <span className="font-semibold text-black dark:text-white">{phone}</span>
           </p>
         </div>
@@ -135,30 +137,30 @@ export function OtpModal({ phone, onVerified, onClose, mode }: OtpModalProps) {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              Verifying...
+              {t("verifying")}
             </>
           ) : (
-            "Verify"
+            t("verify")
           )}
         </button>
 
         <div className="text-center mt-4">
           {resendCooldown > 0 ? (
             <span className="text-xs text-black/30 dark:text-white/30">
-              Resend in {resendCooldown}s
+              {t("resendInMsg")}{resendCooldown}s
             </span>
           ) : (
             <button
               onClick={handleResend}
               className="text-xs text-brand-red hover:underline font-semibold"
             >
-              Resend code
+              {t("resendCode")}
             </button>
           )}
         </div>
 
         <p className="text-[10px] text-black/25 dark:text-white/25 text-center mt-3">
-          Didn&apos;t receive a code? Check your SMS or wait a moment.
+          {t("didntReceive")}
         </p>
       </div>
     </div>

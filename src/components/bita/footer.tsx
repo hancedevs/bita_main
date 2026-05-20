@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronUp } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import type { PageView } from "./navbar";
 
 interface FooterProps {
@@ -13,6 +14,7 @@ interface FooterProps {
 }
 
 export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: FooterProps) {
+  const t = useTranslations("Footer");
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
@@ -42,10 +44,10 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                 className="h-12 w-auto object-contain mb-4 brightness-0 invert"
               />
               <p className="text-xs text-white/25 leading-relaxed mb-4">
-                International shipping from Ethiopia to the world.
+                {t("tagline")}
               </p>
               <a
-                href="tel:+251 94 676 6667"
+                href="tel:+251946766667"
                 className="text-sm text-white/40 hover:text-brand-red transition-colors font-medium"
               >
                 +251 94 676 6667
@@ -53,23 +55,31 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
             </div>
             <div>
               <h4 className="text-white font-semibold text-xs uppercase tracking-wider mb-4">
-                Shipping
+                {t("colShipping")}
               </h4>
               <ul className="space-y-2.5">
                 <li>
                   <button
-                    onClick={() => { if (onNavigate) onNavigate("home"); else onScrollTo("hero"); onSwitchTab("quote"); }}
+                    onClick={() => {
+                      if (onNavigate) onNavigate("home");
+                      else onScrollTo("hero");
+                      onSwitchTab("quote");
+                    }}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Get a Quote
+                    {t("getQuote")}
                   </button>
                 </li>
                 <li>
                   <button
-                    onClick={() => { if (onNavigate) onNavigate("home"); else onScrollTo("hero"); onSwitchTab("track"); }}
+                    onClick={() => {
+                      if (onNavigate) onNavigate("home");
+                      else onScrollTo("hero");
+                      onSwitchTab("track");
+                    }}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Track Shipment
+                    {t("trackShipment")}
                   </button>
                 </li>
                 <li>
@@ -77,7 +87,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => onOpenModal("pickup")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Schedule Pickup
+                    {t("schedulePickup")}
                   </button>
                 </li>
                 <li>
@@ -85,22 +95,25 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => onOpenModal("locations")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Drop-off Locations
+                    {t("dropoff")}
                   </button>
                 </li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-semibold text-xs uppercase tracking-wider mb-4">
-                Resources
+                {t("colResources")}
               </h4>
               <ul className="space-y-2.5">
                 <li>
                   <button
-                    onClick={() => { if (onNavigate) onNavigate("home"); else onScrollTo("docs"); }}
+                    onClick={() => {
+                      if (onNavigate) onNavigate("home");
+                      else onScrollTo("docs");
+                    }}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Document Checklist
+                    {t("docChecklist")}
                   </button>
                 </li>
                 <li>
@@ -108,7 +121,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => onOpenModal("restricted")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Restricted Items
+                    {t("restricted")}
                   </button>
                 </li>
                 <li>
@@ -116,7 +129,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => toast("Opening customs estimator...")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Customs Estimator
+                    {t("customs")}
                   </button>
                 </li>
                 <li>
@@ -124,14 +137,14 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => toast("Opening guides...")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Shipping Guides
+                    {t("guides")}
                   </button>
                 </li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-semibold text-xs uppercase tracking-wider mb-4">
-                Support
+                {t("colSupport")}
               </h4>
               <ul className="space-y-2.5">
                 <li>
@@ -139,7 +152,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => onOpenModal("claim")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    File a Claim
+                    {t("fileClaim")}
                   </button>
                 </li>
                 <li>
@@ -147,7 +160,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => navigateTo("support")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Contact Us
+                    {t("contactUs")}
                   </button>
                 </li>
                 <li>
@@ -155,14 +168,14 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => navigateTo("support")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    FAQs
+                    {t("faqs")}
                   </button>
                 </li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-semibold text-xs uppercase tracking-wider mb-4">
-                Company
+                {t("colCompany")}
               </h4>
               <ul className="space-y-2.5">
                 <li>
@@ -170,7 +183,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => navigateTo("about")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    About Us
+                    {t("aboutUs")}
                   </button>
                 </li>
                 <li>
@@ -178,7 +191,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => toast("Careers — 8 open positions...")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Careers
+                    {t("careers")}
                   </button>
                 </li>
                 <li>
@@ -186,7 +199,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => toast("Privacy policy...")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Privacy Policy
+                    {t("privacy")}
                   </button>
                 </li>
                 <li>
@@ -194,7 +207,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
                     onClick={() => toast("Terms...")}
                     className="text-sm text-white/30 hover:text-brand-red transition-colors"
                   >
-                    Terms of Service
+                    {t("terms")}
                   </button>
                 </li>
               </ul>
@@ -202,7 +215,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
           </div>
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <span className="text-xs text-white/15">
-              © 2024 BITA Express. All rights reserved.
+              {t("copyright")}
             </span>
             <div className="flex items-center gap-2">
               {[
@@ -227,11 +240,10 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
       {/* Scroll to top */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className={`fixed bottom-6 left-6 z-50 w-10 h-10 bg-brand-red text-white rounded-full shadow-lg flex items-center justify-center hover:bg-brand-red-dark transition-all ${
-          showScrollTop
+        className={`fixed bottom-6 left-6 z-50 w-10 h-10 bg-brand-red text-white rounded-full shadow-lg flex items-center justify-center hover:bg-brand-red-dark transition-all ${showScrollTop
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
+          }`}
       >
         <ChevronUp className="w-5 h-5" />
       </button>

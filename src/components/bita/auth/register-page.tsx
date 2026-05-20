@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { register } from "@/store/authSlice";
 import { OtpModal } from "./otp-modal";
+import { useTranslations } from "next-intl";
 
 export function RegisterPage() {
+  const t = useTranslations("Auth");
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { loading, pendingPhone } = useAppSelector((state) => state.auth);
@@ -26,13 +28,13 @@ export function RegisterPage() {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.name.trim()) errs.name = "Full name is required";
-    if (!form.email.trim()) errs.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Invalid email format";
-    if (!form.phone.trim()) errs.phone = "Phone number is required";
-    else if (!/^\+251/.test(form.phone)) errs.phone = "Must start with +251";
-    if (!form.password) errs.password = "Password is required";
-    else if (form.password.length < 8) errs.password = "At least 8 characters";
+    if (!form.name.trim()) errs.name = t("nameRequired");
+    if (!form.email.trim()) errs.email = t("emailRequired");
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = t("invalidEmail");
+    if (!form.phone.trim()) errs.phone = t("phoneRequired");
+    else if (!/^\+251/.test(form.phone)) errs.phone = t("phoneFormat");
+    if (!form.password) errs.password = t("passwordRequired");
+    else if (form.password.length < 8) errs.password = t("passwordLength");
     return errs;
   };
 
@@ -46,17 +48,17 @@ export function RegisterPage() {
     setErrors({});
     dispatch(register(form)).then((result) => {
       if (register.fulfilled.match(result)) {
-        toast.success("OTP sent! Check your phone.");
+        toast.success(t("otpSent"));
         setShowOtp(true);
       } else {
-        toast.error(result.payload as string || "Registration failed");
+        toast.error(result.payload as string || t("registerFailed"));
       }
     });
   };
 
   const handleOtpVerified = () => {
     setShowOtp(false);
-    toast.success("Account created! Please sign in.");
+    toast.success(t("accountCreated"));
     router.push("/auth/login");
   };
 
@@ -68,7 +70,7 @@ export function RegisterPage() {
             onClick={() => router.back()}
             className="flex items-center gap-2 text-sm text-black/50 dark:text-white/50 hover:text-brand-red mb-8 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back
+            <ArrowLeft className="w-4 h-4" /> {t("back")}
           </button>
 
           <div className="text-center mb-8">
@@ -77,21 +79,21 @@ export function RegisterPage() {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-black dark:text-white">Create your account</h1>
+            <h1 className="text-2xl font-bold text-black dark:text-white">{t("registerTitle")}</h1>
             <p className="text-sm text-black/50 dark:text-white/50 mt-2">
-              Start shipping smarter with BITA Express
+              {t("registerSubtitle")}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-                Full Name
+                {t("fullName")}
               </label>
               <Input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Alemu Bekele"
+                placeholder={t("namePlaceholder")}
                 className={errors.name ? "border-red-500" : ""}
               />
               {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
@@ -99,7 +101,7 @@ export function RegisterPage() {
 
             <div>
               <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-                Email
+                {t("email")}
               </label>
               <Input
                 type="email"
@@ -113,13 +115,13 @@ export function RegisterPage() {
 
             <div>
               <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-                Phone Number
+                {t("phoneNumber")}
               </label>
               <Input
                 type="tel"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                placeholder="+251 91X XXX XXXX"
+                placeholder={t("phonePlaceholder")}
                 className={errors.phone ? "border-red-500" : ""}
               />
               {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
@@ -127,14 +129,14 @@ export function RegisterPage() {
 
             <div>
               <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-                Password
+                {t("password")}
               </label>
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="Min. 8 characters"
+                  placeholder={t("passwordPlaceholder")}
                   className={`pr-10 ${errors.password ? "border-red-500" : ""}`}
                 />
                 <button
@@ -151,11 +153,11 @@ export function RegisterPage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs text-black/40 dark:text-white/40">
                 <Check className="w-3.5 h-3.5 text-green-500" />
-                8+ characters
+                {t("passwordRequirement1")}
               </div>
               <div className="flex items-center gap-2 text-xs text-black/40 dark:text-white/40">
                 <Check className="w-3.5 h-3.5 text-green-500" />
-                At least one number
+                {t("passwordRequirement2")}
               </div>
             </div>
 
@@ -170,18 +172,18 @@ export function RegisterPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Creating account...
+                  {t("creating")}
                 </span>
               ) : (
-                "Create Account"
+                t("createAccount")
               )}
             </Button>
           </form>
 
           <p className="text-center text-sm text-black/50 dark:text-white/50 mt-6">
-            Already have an account?{" "}
+            {t("alreadyHaveAccount")}{" "}
             <a href="/auth/login" className="text-brand-red hover:underline font-semibold">
-              Sign in
+              {t("signIn")}
             </a>
           </p>
         </div>

@@ -17,6 +17,7 @@ import {
   ServicesSection,
   MobileAppSection,
   SupportSection,
+  TestimonialsSection,
 } from "@/components/bita/sections";
 import { Footer } from "@/components/bita/footer";
 import { AboutPage } from "@/components/bita/about-page";
@@ -220,6 +221,8 @@ export default function Home() {
         <TrackingSection />
 
         <ServicesSection onOpenModal={handleOpenModal} />
+
+        <TestimonialsSection />
 
         <SupportSection onOpenModal={handleOpenModal} />
       </main>
