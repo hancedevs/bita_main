@@ -151,9 +151,9 @@ export function RoutesSection({ onFillRoute }: { onFillRoute: (from: string, to:
   return (
     <section id="routes" className="bg-white dark:bg-black py-14 md:py-20 transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-6">
-        <Reveal>
+<Reveal>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-<div>
+            <div>
               <h2 className="text-2xl md:text-3xl font-extrabold text-black dark:text-white tracking-tight">
                 Popular routes
               </h2>
@@ -169,7 +169,7 @@ export function RoutesSection({ onFillRoute }: { onFillRoute: (from: string, to:
             </button>
           </div>
 
-<div className="border border-black/8 dark:border-white/10 rounded-2xl overflow-hidden">
+          <div className="border border-black/8 dark:border-white/10 rounded-2xl overflow-hidden">
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-6 h-6 text-brand-red animate-spin" />
@@ -182,9 +182,10 @@ export function RoutesSection({ onFillRoute }: { onFillRoute: (from: string, to:
               <>
                 {/* Header */}
                 <div className="hidden sm:grid grid-cols-12 gap-4 px-6 py-3 bg-black/[0.02] dark:bg-white/[0.03] text-[11px] font-semibold uppercase tracking-wider text-black/35 dark:text-white/35">
-                  <div className="col-span-5">Route</div>
-                  <div className="col-span-2 text-center">Transit</div>
+                  <div className="col-span-4">Route</div>
+                  <div className="col-span-1 text-center">Transit</div>
                   <div className="col-span-2 text-center">Standard</div>
+                  <div className="col-span-2 text-center">Premium</div>
                   <div className="col-span-2 text-center">Economy</div>
                   <div className="col-span-1" />
                 </div>
@@ -195,25 +196,28 @@ export function RoutesSection({ onFillRoute }: { onFillRoute: (from: string, to:
                     key={route.id}
                     className="route-row grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 px-6 py-4 border-t border-black/5 dark:border-white/10 items-center"
                   >
-                    <div className="sm:col-span-5 flex items-center gap-3">
+                    <div className="sm:col-span-4 flex items-center gap-3">
                       <span className="text-base">{getRouteFlag(route.id)}</span>
                       <div>
                         <div className="text-sm font-semibold text-black dark:text-white">
                           {route.origin} → {route.destination}
                         </div>
                         <div className="text-[11px] text-black/30 dark:text-white/30 sm:hidden">
-                          {route.transitTime} days · ${route.pricing.standard.toFixed(2)} / ${route.pricing.economy.toFixed(2)}
+                          {route.transitTime} days · ETB {route.pricing.standard.toFixed(2)} / ETB {route.pricing.economy.toFixed(2)}
                         </div>
                       </div>
                     </div>
-                    <div className="sm:col-span-2 text-center hidden sm:block">
+                    <div className="sm:col-span-1 text-center hidden sm:block">
                       <span className="text-sm text-black/60 dark:text-white/60">{route.transitTime} days</span>
                     </div>
                     <div className="sm:col-span-2 text-center hidden sm:block">
-                      <span className="text-sm font-semibold text-black dark:text-white">${route.pricing.standard.toFixed(2)}</span>
+                      <span className="text-sm font-semibold text-black dark:text-white">ETB {route.pricing.standard.toFixed(2)}</span>
                     </div>
                     <div className="sm:col-span-2 text-center hidden sm:block">
-                      <span className="text-sm text-black/50 dark:text-white/50">${route.pricing.economy.toFixed(2)}</span>
+                      <span className="text-sm font-semibold text-brand-red">ETB {route.pricing.premium.toFixed(2)}</span>
+                    </div>
+                    <div className="sm:col-span-2 text-center hidden sm:block">
+                      <span className="text-sm text-black/50 dark:text-white/50">ETB {route.pricing.economy.toFixed(2)}</span>
                     </div>
                     <div className="sm:col-span-1 text-right hidden sm:block">
                       <button

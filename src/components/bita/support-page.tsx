@@ -166,22 +166,36 @@ export function SupportPage() {
                 icon: MapPin,
                 title: "Visit Us",
                 detail: (
-                  <div className="space-y-2">
+                  <div className="grid sm:grid-cols-2 gap-4">
                     <div className="text-sm font-medium text-black/70 dark:text-white/70">
                       <span className="font-semibold text-brand-red">Ethiopia</span>
                       <br />Addis Ababa, Bole Medhinalem
                       <br />Blen Building, 4th Floor, Office 404
+                      <a
+                        href="https://maps.app.goo.gl/x9jbcQRoTU1VMGAz5"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block mt-2 text-xs font-semibold text-brand-red hover:text-brand-red-dark transition-colors"
+                      >
+                        Get directions →
+                      </a>
                     </div>
                     <div className="text-sm font-medium text-black/70 dark:text-white/70">
                       <span className="font-semibold text-brand-red">China</span>
                       <br />Guangzhou City
                       <br />Central Plaza, Office 1503B
+                      <a
+                        href="https://maps.app.goo.gl/Ky2b9QQGMbiCvT1Z9"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block mt-2 text-xs font-semibold text-brand-red hover:text-brand-red-dark transition-colors"
+                      >
+                        Get directions →
+                      </a>
                     </div>
                   </div>
                 ),
                 sub: "Mon–Sat, 8AM–6PM",
-                action: "#",
-                actionLabel: "Get directions",
               },
             ].map((item) => (
               <div
