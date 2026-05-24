@@ -5,9 +5,14 @@ import { ThemeProvider } from "@/components/bita/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "./providers";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+
+export const dynamic = "force-static";
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 const inter = Inter({
   variable: "--font-inter",
@@ -42,9 +47,7 @@ export default async function RootLayout({
     notFound();
   }
 
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
+  const messages = (await import(`../../../messages/${locale}.json`)).default;
 
   return (
     <html lang={locale} suppressHydrationWarning>
