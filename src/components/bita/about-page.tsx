@@ -86,7 +86,7 @@ export function AboutPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
           <div className="flex justify-center mb-8">
             <img
-              src="https://z-cdn-media.chatglm.cn/files/aadb4316-9e0c-4244-832d-fdb53765d1ed.png?auth_key=1877574723-2941d9d585774f4f97ed9c01016d4d86-0-e56397bb508db8ef7277ffdff393dce4"
+              src="/assets/BE%20Logo%20(No%20BG,%20Full,%20Dark).svg"
               alt="BITA Express Logo"
               className="h-16 md:h-20 w-auto object-contain dark:brightness-0 dark:invert"
             />
@@ -184,7 +184,7 @@ export function AboutPage() {
                     alt={image.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-500" />
                   <div className="absolute bottom-10 left-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
                     <h4 className="text-white text-2xl font-black tracking-tight">{image.title}</h4>
                   </div>

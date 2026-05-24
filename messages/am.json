@@ -192,7 +192,22 @@
     "description": "ከግል ላኪዎች እስከ ትላልቅ ኢንተርፕራይዞች — BITA Expressን የሚመርጡበትን ምክንያት ይስሙ።",
     "statDeliveries": "የተላኩ ጭነቶች",
     "statRating": "አማካይ ደረጃ",
-    "statOntime": "በሰዓቱ ማድረስ"
+    "statOntime": "በሰዓቱ ማድረስ",
+    "testimonial1Name": "ሜሮን ሃይሌ",
+    "testimonial1Role": "የኢ-ኮሜርስ ሻጭ, አዲስ አበባ",
+    "testimonial1Quote": "BITA Express ለመደብሬ ለውጥ አምጥቷል። የጀርመን ደንበኞቼ ትዕዛዛቸውን ከ4 ቀናት ባነሰ ጊዜ ይቀበላሉ። የቀጥታ ክትትል ሁሉንም ሰላምታ ያደርጋል።",
+    "testimonial2Name": "ዳንኤል በቀለ",
+    "testimonial2Role": "የማስመጣት ሥራ አስኪያጅ, ዳሽን ቢሩ",
+    "testimonial2Quote": "ወሳኝ የማሽን አካሎችን በመደበኛነት እንልካለን። የBITA ፕሪሚየም አገልግሎት ምንጊዜም ቀኑን አያልፍም። የጉምሩክ አያያዛቸው ዘለፈ ነው — ቀናትን ያድናል።",
+    "testimonial3Name": "ትግስት ወርቁ",
+    "testimonial3Role": "የዲያስፖራ አባል, ፍራንክፈርት",
+    "testimonial3Quote": "ወደ ቤት ቤተሰቦቼ ጥቅሎች መላክ ቀደም ሲል አስጨናቂ ነበር። BITA ጋር ሁሉንም ነገር ከስልኬ ማስያዝ፣ መክፈልና መከታተል እችላለሁ። የማድረስ ፎቶ ደስታን ጨምሯል።",
+    "testimonial4Name": "ዮናስ ተስፋዬ",
+    "testimonial4Role": "መስራች, ሰላም ሙሪ",
+    "testimonial4Quote": "ወደ አሜሪካ እና ዩኬ ባህላዊ ጨርቆችን ወደ ውጭ እልካለሁ። የBITA ዋጋ ካገኘኋቸው ዋጋዎች ትርፋማው ነው፣ እናም የሰነድ ድጋፋቸው ቀዳሚ ሙከራ ላይ ኤክስፖርት ፈቃዱን እንድፈጽም አግዞኛል።",
+    "testimonial5Name": "ሳራ አህመድ",
+    "testimonial5Role": "የሰው ሃብት ዳይሬክተር, ኢትዮ ቴሌኮም",
+    "testimonial5Quote": "BITA ለሁሉም ክልላዊ ቢሮዎቻችን ለከተሞች ሰነዶች አቅርቦት እንጠቀምበታለን። አስተማማኝ፣ ፈጣን፣ እናም ዲጂታል ደረሰኞቹ ከወጪ ስርዓታችን ጋር ፍጹም ይዋሃዳሉ።"
   },
   "SupportCTA": {
     "problemTitle": "በጭነትዎ ላይ ችግር አለ?",

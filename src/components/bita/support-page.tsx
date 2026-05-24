@@ -151,11 +151,12 @@ export function SupportPage() {
                       <span className="font-semibold text-brand-red">{t("ethiopia")}</span>
                       <br />{t("ethiopiaAddress")}
                       <br />{t("ethiopiaAddress2")}
-                      <Button asChild variant="link" className="h-auto p-0 text-xs font-semibold text-brand-red hover:text-brand-red-dark mt-2">
+                      <Button asChild variant="outline" className="w-full mt-3 border-brand-red text-brand-red hover:bg-brand-red hover:text-white transition-all duration-300 rounded-lg text-xs h-9">
                         <a
                           href="https://maps.app.goo.gl/x9jbcQRoTU1VMGAz5"
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="flex items-center justify-center"
                         >
                           {t("getDirections")}
                         </a>
@@ -165,11 +166,12 @@ export function SupportPage() {
                       <span className="font-semibold text-brand-red">{t("china")}</span>
                       <br />{t("chinaAddress")}
                       <br />{t("chinaAddress2")}
-                      <Button asChild variant="link" className="h-auto p-0 text-xs font-semibold text-brand-red hover:text-brand-red-dark mt-2">
+                      <Button asChild variant="outline" className="w-full mt-3 border-brand-red text-brand-red hover:bg-brand-red hover:text-white transition-all duration-300 rounded-lg text-xs h-9">
                         <a
                           href="https://maps.app.goo.gl/Ky2b9QQGMbiCvT1Z9"
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="flex items-center justify-center"
                         >
                           {t("getDirections")}
                         </a>

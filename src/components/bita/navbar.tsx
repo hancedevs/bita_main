@@ -151,11 +151,18 @@ export function Navbar({ currentPage, onNavigate, onScrollTo }: NavbarProps) {
             onClick={() => handleNavClick("home")}
             className="flex items-center shrink-0"
           >
-            <img
-              src="https://z-cdn-media.chatglm.cn/files/aadb4316-9e0c-4244-832d-fdb53765d1ed.png?auth_key=1877574723-2941d9d585774f4f97ed9c01016d4d86-0-e56397bb508db8ef7277ffdff393dce4"
-              alt="BITA Express Logo"
-              className="h-11 md:h-13 w-auto object-contain"
-            />
+            <>
+              <img
+                src="/assets/BE%20Logo%20(No%20BG,%20Full,%20Dark).svg"
+                alt="BITA Express Logo"
+                className="h-11 md:h-13 w-auto object-contain dark:hidden"
+              />
+              <img
+                src="/assets/BE%20Logo%20(No%20BG,%20Full,%20White).svg"
+                alt="BITA Express Logo"
+                className="h-11 md:h-13 w-auto object-contain hidden dark:block"
+              />
+            </>
           </button>
 
           <nav className="hidden lg:flex items-center gap-1 h-full">

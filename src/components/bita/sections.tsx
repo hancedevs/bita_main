@@ -31,6 +31,12 @@ import {
   Plus,
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 /* ====== Reveal on Scroll ====== */
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -319,8 +325,8 @@ export function MobileAppSection() {
                   href="#"
                   className="inline-flex items-center gap-3 bg-black dark:bg-white text-white dark:text-black px-6 py-3.5 rounded-xl hover:opacity-90 transition-opacity shrink-0"
                 >
-                  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302a1 1 0 0 0 0-1.42l-2.302-2.302-2.302 2.302a1 1 0 0 1 0-1.42l2.302-2.302zM5.864 21.342L16.8 15.088l-2.302-2.302-8.634 8.556z" />
+                  <svg viewBox="0 0 512 512" className="w-6 h-6" fill="currentColor">
+                    <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z" />
                   </svg>
                   <div className="text-left">
                     <div className="text-[10px] leading-none opacity-70">{t("getItOn")}</div>
@@ -800,14 +806,25 @@ export function TestimonialsSection() {
     { label: t("statOntime"), value: "99.2%" },
   ];
   const [active, setActive] = useState(0);
+  const [api, setApi] = useState<CarouselApi | null>(null);
   const total = testimonialsList.length;
 
   useEffect(() => {
+    if (!api) return;
+    const onSelect = () => setActive(api.selectedScrollSnap());
+    api.on("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
+  useEffect(() => {
+    if (!api) return;
     const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % total);
+      api.scrollNext();
     }, 4500);
     return () => clearInterval(timer);
-  }, [total]);
+  }, [api]);
 
   return (
     <section id="testimonials" className="bg-black/[0.02] dark:bg-white/[0.02] py-16 md:py-24 transition-colors duration-500 overflow-hidden">
@@ -826,87 +843,60 @@ export function TestimonialsSection() {
             </p>
           </div>
 
-          {/* Cards grid — show 3 on desktop, highlight the active one */}
-          <div className="relative">
-            {/* Desktop: 3-column grid with center card highlighted */}
-            <div className="hidden md:grid md:grid-cols-3 gap-5">
-              {[-1, 0, 1].map((offset) => {
-                const idx = (active + offset + total) % total;
-                const te = testimonialsList[idx];
-                const isCenter = offset === 0;
-                return (
-                  <div
-                    key={idx}
-                    onClick={() => setActive(idx)}
-                    className={`cursor-pointer rounded-2xl border p-6 transition-all duration-500 flex flex-col gap-4 ${isCenter
-                      ? "bg-white dark:bg-zinc-900 border-brand-red/20 shadow-xl shadow-brand-red/5 scale-[1.02]"
-                      : "bg-white/60 dark:bg-zinc-900/40 border-black/5 dark:border-white/8 opacity-60 hover:opacity-80"
-                      }`}
-                  >
-                    <StarRating count={te.rating} />
-                    <p className="text-sm text-black/70 dark:text-white/70 leading-relaxed flex-1">
-                      &ldquo;{te.quote}&rdquo;
-                    </p>
-                    <div className="flex items-center gap-3 pt-2 border-t border-black/5 dark:border-white/8">
-                      <div
-                        className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${te.color}`}
-                      >
-                        {te.initials}
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-black dark:text-white leading-tight">
-                          {te.name}
+          {/* Smooth Carousel Grid */}
+          <div className="relative mt-8 px-4 sm:px-12">
+            <Carousel
+              setApi={setApi}
+              opts={{
+                align: "center",
+                loop: true,
+                duration: 40,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4 mr-0">
+                {testimonialsList.map((te, idx) => (
+                  <CarouselItem key={idx} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3 py-8">
+                    <div
+                      className={`h-full rounded-2xl border p-6 transition-all duration-500 flex flex-col gap-4 ${active === idx
+                          ? "bg-white dark:bg-zinc-900 border-brand-red/40 shadow-[0_8px_30px_rgb(0,0,0,0.12)] opacity-100"
+                          : "bg-white/60 dark:bg-zinc-900/40 border-black/5 dark:border-white/8 opacity-50 hover:opacity-80"
+                        }`}
+                    >
+                      <StarRating count={te.rating} />
+                      <p className="text-sm text-black/70 dark:text-white/70 leading-relaxed flex-1">
+                        &ldquo;{te.quote}&rdquo;
+                      </p>
+                      <div className="flex items-center gap-3 pt-2 border-t border-black/5 dark:border-white/8 mt-4">
+                        <div
+                          className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${te.color}`}
+                        >
+                          {te.initials}
                         </div>
-                        <div className="text-[11px] text-black/35 dark:text-white/35 mt-0.5">
-                          {te.role}
+                        <div>
+                          <div className="text-sm font-semibold text-black dark:text-white leading-tight">
+                            {te.name}
+                          </div>
+                          <div className="text-[11px] text-black/35 dark:text-white/35 mt-0.5">
+                            {te.role}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
 
-            {/* Mobile: single card */}
-            <div className="md:hidden">
-              {(() => {
-                const te = testimonialsList[active];
-                return (
-                  <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-brand-red/15 p-6 shadow-xl shadow-brand-red/5 flex flex-col gap-4">
-                    <StarRating count={te.rating} />
-                    <p className="text-sm text-black/70 dark:text-white/70 leading-relaxed">
-                      &ldquo;{te.quote}&rdquo;
-                    </p>
-                    <div className="flex items-center gap-3 pt-2 border-t border-black/5 dark:border-white/8">
-                      <div
-                        className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${te.color}`}
-                      >
-                        {te.initials}
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-black dark:text-white leading-tight">
-                          {te.name}
-                        </div>
-                        <div className="text-[11px] text-black/35 dark:text-white/35 mt-0.5">
-                          {te.role}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
+            </Carousel>
 
             {/* Dot navigation */}
             <div className="flex justify-center gap-2 mt-8">
               {testimonialsList.map((_, i) => (
-                <button
+                <div
                   key={i}
-                  onClick={() => setActive(i)}
-                  aria-label={`Go to testimonial ${i + 1}`}
-                  className={`transition-all duration-300 rounded-full ${i === active
-                    ? "w-6 h-2 bg-brand-red"
-                    : "w-2 h-2 bg-black/15 dark:bg-white/15 hover:bg-brand-red/40"
+                  className={`transition-all duration-500 rounded-full ${i === active
+                      ? "w-6 h-2 bg-brand-red"
+                      : "w-2 h-2 bg-black/15 dark:bg-white/15"
                     }`}
                 />
               ))}

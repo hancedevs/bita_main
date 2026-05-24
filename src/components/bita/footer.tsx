@@ -39,7 +39,7 @@ export function Footer({ onScrollTo, onSwitchTab, onOpenModal, onNavigate }: Foo
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 md:col-span-1 mb-4 md:mb-0">
               <img
-                src="https://z-cdn-media.chatglm.cn/files/aadb4316-9e0c-4244-832d-fdb53765d1ed.png?auth_key=1877574723-2941d9d585774f4f97ed9c01016d4d86-0-e56397bb508db8ef7277ffdff393dce4"
+                src="/assets/BE%20Logo%20(No%20BG,%20Full,%20Dark).svg"
                 alt="BITA Express"
                 className="h-12 w-auto object-contain mb-4 brightness-0 invert"
               />
