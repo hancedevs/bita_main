@@ -19,6 +19,7 @@ import { trackShipment, clearTracking } from "@/store/trackingSlice";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
 
 interface TrackingResultProps {
   trackingCode: string;
@@ -42,14 +43,24 @@ function formatTimestamp(timestamp: string): string {
   }
 }
 
-function formatStatus(status: string): string {
-  return status.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-}
+// Localized status formatting will be handled inside the component
 
 export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
+  const t = useTranslations("TrackingResult");
   const dispatch = useAppDispatch();
   const { data, loading, error } = useAppSelector((state) => state.tracking);
   const [mapExpanded, setMapExpanded] = useState(false);
+
+  const STATUS_LABELS: Record<string, string> = {
+    CREATED: t("statusCreated"),
+    PICKED_UP: t("statusPickedUp"),
+    IN_TRANSIT: t("statusInTransit"),
+    OUT_FOR_DELIVERY: t("statusOutForDelivery"),
+    DELIVERED: t("statusDelivered"),
+    RETURNED: t("statusReturned"),
+  };
+
+  const formatStatus = (status: string) => STATUS_LABELS[status] || status;
 
   useEffect(() => {
     dispatch(trackShipment(trackingCode));
@@ -63,9 +74,9 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(trackingUrl).then(() => {
-      toast.success("Tracking link copied to clipboard!");
+      toast.success(t("copied"));
     }).catch(() => {
-      toast.error("Failed to copy link");
+      toast.error(t("copyFailed"));
     });
   };
 
@@ -74,7 +85,7 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
       <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-brand-red" />
-          <p className="text-sm text-muted-foreground">Loading tracking information...</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     );
@@ -84,9 +95,9 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
     return (
       <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-semibold text-red-500">Failed to load tracking info</p>
-          <p className="text-sm text-muted-foreground mt-2">{error || "No data available"}</p>
-          <Button onClick={onClose} className="mt-4">Go Back</Button>
+          <p className="text-lg font-semibold text-red-500">{t("failedTitle")}</p>
+          <p className="text-sm text-muted-foreground mt-2">{error || t("noData")}</p>
+          <Button onClick={onClose} className="mt-4">{t("goBack")}</Button>
         </div>
       </div>
     );
@@ -99,14 +110,14 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-[11px] text-black/30 dark:text-white/30 uppercase tracking-widest font-medium">
-                Tracking Results
+                {t("title")}
               </div>
               <div className="text-xl font-bold text-black dark:text-white mt-1 font-mono flex items-center gap-2">
                 {data.trackingNumber}
                 <button
                   onClick={handleCopyLink}
                   className="text-black/20 dark:text-white/20 hover:text-brand-red transition-colors"
-                  title="Copy tracking link"
+                  title={t("copyLink")}
                 >
                   <Copy className="w-4 h-4" />
                 </button>
@@ -120,7 +131,7 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
               <button
                 onClick={onClose}
                 className="p-2 text-black/30 dark:text-white/30 hover:text-black dark:hover:text-white transition-colors rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
-                title="Close tracking"
+                title={t("close")}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -130,11 +141,11 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
           <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-black/35 dark:text-white/35">
             <span className="flex items-center gap-1"><Package className="w-3.5 h-3.5" /> {data.packageType}</span>
             <span>·</span>
-            <span>Weight: {data.weight}</span>
+            <span>{t("weight")}: {data.weight}</span>
             <span>·</span>
-            <span>From: {data.pickupAddress}</span>
+            <span>{t("sender")}: {data.pickupAddress}</span>
             <span>·</span>
-            <span>To: {data.deliveryAddress}</span>
+            <span>{t("receiver")}: {data.deliveryAddress}</span>
           </div>
 
           <div className="mt-4">
@@ -145,10 +156,10 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
               />
             </div>
             <div className="flex justify-between mt-1.5 text-[10px] text-black/25 dark:text-white/25">
-              <span>Created</span>
-              <span>In Transit</span>
-              <span>Out for Delivery</span>
-              <span>Delivered</span>
+              <span>{t("statusCreated")}</span>
+              <span>{t("statusInTransit")}</span>
+              <span>{t("statusOutForDelivery")}</span>
+              <span>{t("statusDelivered")}</span>
             </div>
           </div>
         </div>
@@ -159,12 +170,12 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm uppercase tracking-wider">Shipment Timeline</CardTitle>
+                <CardTitle className="text-sm uppercase tracking-wider">{t("shipmentTimeline")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-0">
                   {data.events.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No events yet</p>
+                    <p className="text-sm text-muted-foreground">{t("noEvents")}</p>
                   ) : (
                     data.events.map((event, i) => (
                       <div key={event.id} className="flex gap-3">
@@ -179,7 +190,7 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
                             {formatStatus(event.status)}
                           </div>
                           <div className="text-xs text-black/30 dark:text-white/30 mt-0.5">
-                            {event.locationText || "Location not specified"}
+                            {event.locationText || t("locationNotSpecified")}
                           </div>
                           <div className="text-[11px] text-black/20 dark:text-white/20 mt-0.5 font-mono">
                             {formatTimestamp(event.timestamp)}
@@ -196,7 +207,7 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
           <div className="lg:col-span-1">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-sm uppercase tracking-wider">Package Details</CardTitle>
+                <CardTitle className="text-sm uppercase tracking-wider">{t("packageDetails")}</CardTitle>
                 <button onClick={() => setMapExpanded(!mapExpanded)} className="p-1.5 hover:bg-accent rounded-md">
                   <Maximize2 className="w-3.5 h-3.5" />
                 </button>
@@ -204,13 +215,13 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Sender</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("sender")}</p>
                     <p className="text-sm font-medium mt-1">{data.senderName}</p>
                     <p className="text-xs text-muted-foreground">{data.senderPhone}</p>
                     <p className="text-xs text-muted-foreground mt-1">{data.pickupAddress}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Receiver</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("receiver")}</p>
                     <p className="text-sm font-medium mt-1">{data.receiverName}</p>
                     <p className="text-xs text-muted-foreground">{data.receiverPhone}</p>
                     <p className="text-xs text-muted-foreground mt-1">{data.deliveryAddress}</p>
@@ -230,7 +241,7 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <MapPin className="w-3 h-3 text-brand-red" />
-                  <span>Last updated: {formatTimestamp(data.latestEvent?.timestamp || "")}</span>
+                  <span>{t("lastUpdated")}: {formatTimestamp(data.latestEvent?.timestamp || "")}</span>
                 </div>
               </CardContent>
             </Card>
@@ -239,43 +250,43 @@ export function TrackingResult({ trackingCode, onClose }: TrackingResultProps) {
           <div className="lg:col-span-1 space-y-5">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm uppercase tracking-wider">QR Code</CardTitle>
+                <CardTitle className="text-sm uppercase tracking-wider">{t("qrCode")}</CardTitle>
               </CardHeader>
               <CardContent className="text-center">
                 <div className="inline-block p-4 bg-white rounded-2xl border border-black/5 shadow-sm">
                   <QRCodeSVG value={trackingUrl} size={160} level="M" includeMargin={false} fgColor="#000000" bgColor="#ffffff" />
                 </div>
-                <p className="text-xs text-muted-foreground mt-3">Scan to track on any device</p>
-                <button onClick={() => toast("QR code downloaded")} className="mt-3 text-xs font-semibold text-brand-red hover:text-brand-red-dark transition-colors inline-flex items-center gap-1">
-                  <Download className="w-3 h-3" /> Download QR Code
+                <p className="text-xs text-muted-foreground mt-3">{t("scanToTrack")}</p>
+                <button onClick={() => toast(t("downloading"))} className="mt-3 text-xs font-semibold text-brand-red hover:text-brand-red-dark transition-colors inline-flex items-center gap-1">
+                  <Download className="w-3 h-3" /> {t("downloadQr")}
                 </button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm uppercase tracking-wider">Actions</CardTitle>
+                <CardTitle className="text-sm uppercase tracking-wider">{t("actions")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <button onClick={handleCopyLink} className="w-full flex items-center gap-3 px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03] rounded-xl hover:bg-brand-red/5 transition-colors text-left group border border-transparent hover:border-brand-red/10">
                   <Copy className="w-4 h-4 text-muted-foreground group-hover:text-brand-red" />
-                  <span className="text-sm text-muted-foreground group-hover:text-brand-red">Copy tracking link</span>
+                  <span className="text-sm text-muted-foreground group-hover:text-brand-red">{t("copyLink")}</span>
                 </button>
-                <button onClick={() => toast("Sharing tracking details...")} className="w-full flex items-center gap-3 px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03] rounded-xl hover:bg-brand-red/5 transition-colors text-left group border border-transparent hover:border-brand-red/10">
+                <button onClick={() => toast(t("sharing"))} className="w-full flex items-center gap-3 px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03] rounded-xl hover:bg-brand-red/5 transition-colors text-left group border border-transparent hover:border-brand-red/10">
                   <Share2 className="w-4 h-4 text-muted-foreground group-hover:text-brand-red" />
-                  <span className="text-sm text-muted-foreground group-hover:text-brand-red">Share with recipient</span>
+                  <span className="text-sm text-muted-foreground group-hover:text-brand-red">{t("share")}</span>
                 </button>
-                <button onClick={() => toast("Downloading tracking receipt...")} className="w-full flex items-center gap-3 px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03] rounded-xl hover:bg-brand-red/5 transition-colors text-left group border border-transparent hover:border-brand-red/10">
+                <button onClick={() => toast(t("downloading"))} className="w-full flex items-center gap-3 px-4 py-3 bg-black/[0.02] dark:bg-white/[0.03] rounded-xl hover:bg-brand-red/5 transition-colors text-left group border border-transparent hover:border-brand-red/10">
                   <Download className="w-4 h-4 text-muted-foreground group-hover:text-brand-red" />
-                  <span className="text-sm text-muted-foreground group-hover:text-brand-red">Download receipt</span>
+                  <span className="text-sm text-muted-foreground group-hover:text-brand-red">{t("downloadReceipt")}</span>
                 </button>
               </CardContent>
             </Card>
 
             <div className="bg-brand-red/5 dark:bg-brand-red/10 rounded-2xl p-5 border border-brand-red/10">
-              <h3 className="text-sm font-bold text-black dark:text-white mb-1">Need help?</h3>
-              <p className="text-xs text-muted-foreground mb-3">Contact our support team for assistance.</p>
-              <Button variant="default">File a Claim</Button>
+              <h3 className="text-sm font-bold text-black dark:text-white mb-1">{t("needHelp")}</h3>
+              <p className="text-xs text-muted-foreground mb-3">{t("contactSupport")}</p>
+              <Button variant="default">{t("fileClaim")}</Button>
             </div>
           </div>
         </div>

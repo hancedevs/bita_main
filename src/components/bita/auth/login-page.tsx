@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { login } from "@/store/authSlice";
 import { OtpModal } from "./otp-modal";
+import { useTranslations } from "next-intl";
 
 export function LoginPage() {
+  const t = useTranslations("Auth");
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { loading, pendingPhone } = useAppSelector((state) => state.auth);
@@ -24,8 +26,8 @@ export function LoginPage() {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.emailOrPhone.trim()) errs.emailOrPhone = "Email or phone is required";
-    if (!form.password) errs.password = "Password is required";
+    if (!form.emailOrPhone.trim()) errs.emailOrPhone = t("emailPhoneRequired");
+    if (!form.password) errs.password = t("passwordRequired");
     return errs;
   };
 
@@ -41,14 +43,14 @@ export function LoginPage() {
       if (login.fulfilled.match(result)) {
         setShowOtp(true);
       } else {
-        toast.error(result.payload as string || "Login failed");
+        toast.error(result.payload as string || t("loginFailed"));
       }
     });
   };
 
   const handleOtpVerified = () => {
     setShowOtp(false);
-    toast.success("Welcome back!");
+    toast.success(t("welcomeBackToast"));
     router.push("/");
   };
 
@@ -60,7 +62,7 @@ export function LoginPage() {
             onClick={() => router.back()}
             className="flex items-center gap-2 text-sm text-black/50 dark:text-white/50 hover:text-brand-red mb-8 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back
+            <ArrowLeft className="w-4 h-4" /> {t("back")}
           </button>
 
           <div className="text-center mb-8">
@@ -69,21 +71,21 @@ export function LoginPage() {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-black dark:text-white">Welcome back</h1>
+            <h1 className="text-2xl font-bold text-black dark:text-white">{t("welcomeBack")}</h1>
             <p className="text-sm text-black/50 dark:text-white/50 mt-2">
-              Sign in to manage your shipments
+              {t("signInSubtitle")}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-                Email or Phone
+                {t("emailOrPhone")}
               </label>
               <Input
                 value={form.emailOrPhone}
                 onChange={(e) => setForm({ ...form, emailOrPhone: e.target.value })}
-                placeholder="you@email.com or +251 9X XXX XXXX"
+                placeholder={t("emailPlaceholder")}
                 className={errors.emailOrPhone ? "border-red-500" : ""}
               />
               {errors.emailOrPhone && <p className="text-xs text-red-500 mt-1">{errors.emailOrPhone}</p>}
@@ -91,14 +93,14 @@ export function LoginPage() {
 
             <div>
               <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-                Password
+                {t("password")}
               </label>
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="Your password"
+                  placeholder={t("passwordPlaceholder")}
                   className={`pr-10 ${errors.password ? "border-red-500" : ""}`}
                 />
                 <button
@@ -114,7 +116,7 @@ export function LoginPage() {
 
             <div className="flex justify-end">
               <a href="#" className="text-xs text-brand-red hover:underline font-medium">
-                Forgot password?
+                {t("forgotPassword")}
               </a>
             </div>
 
@@ -129,18 +131,18 @@ export function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Signing in...
+                  {t("signingIn")}
                 </span>
               ) : (
-                "Sign In"
+                t("signIn")
               )}
             </Button>
           </form>
 
           <p className="text-center text-sm text-black/50 dark:text-white/50 mt-6">
-            Don&apos;t have an account?{" "}
+            {t("noAccount")}{" "}
             <a href="/auth/register" className="text-brand-red hover:underline font-semibold">
-              Create one
+              {t("createOne")}
             </a>
           </p>
         </div>

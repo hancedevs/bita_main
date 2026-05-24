@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createBooking, clearBooking, PaymentMethod } from "@/store/bookingSlice";
 import { VehicleType, PriceResponse } from "@/store/quoteSlice";
 import { LocationAutocomplete } from "@/components/ui/location-autocomplete";
+import { useTranslations } from "next-intl";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -47,26 +48,7 @@ interface BookingModalProps {
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
-const stepLabels = [
-  { num: 1, label: "Quote", icon: FileText },
-  { num: 2, label: "Sender", icon: User },
-  { num: 3, label: "Recipient", icon: MapPin },
-  { num: 4, label: "Package", icon: Package },
-  { num: 5, label: "Payment", icon: CreditCard },
-  { num: 6, label: "Confirm", icon: Check },
-];
-
-const contentCategories = [
-  "Documents",
-  "Commercial goods",
-  "Personal effects",
-  "Electronics",
-  "Clothing & textiles",
-  "Food & spices",
-  "Books & printed material",
-  "Medical supplies",
-  "Other",
-];
+// Constants moved inside component for translation support
 
 const PACKAGE_TYPE_MAP: Record<string, string> = {
   "Documents": "DOCUMENTS",
@@ -80,17 +62,7 @@ const PACKAGE_TYPE_MAP: Record<string, string> = {
   "Other": "OTHER",
 };
 
-const paymentMethods = [
-  { id: "CASH" as PaymentMethod, label: "Cash", desc: "Pay when you drop off", icon: Wallet },
-  { id: "TELEBIRR" as PaymentMethod, label: "telebirr", desc: "Mobile money — instant", icon: Phone },
-  { id: "CBE_BIRR" as PaymentMethod, label: "CBE Birr", desc: "Commercial Bank of Ethiopia", icon: Building },
-];
-
-const VEHICLE_LABELS: Record<VehicleType, string> = {
-  MOTORBIKE: "Motorbike",
-  BICYCLE: "Bicycle",
-  FOOT: "Foot",
-};
+// Payment methods and vehicle labels moved inside component
 
 const VEHICLE_ICONS: Record<VehicleType, typeof Truck> = {
   MOTORBIKE: Truck,
@@ -98,19 +70,55 @@ const VEHICLE_ICONS: Record<VehicleType, typeof Truck> = {
   FOOT: Footprints,
 };
 
-const VEHICLE_TIMES: Record<VehicleType, string> = {
-  MOTORBIKE: "~30-60 min",
-  BICYCLE: "~1-2 hours",
-  FOOT: "~2-4 hours",
-};
+// Vehicle times moved inside component
 
 export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProps) {
+  const t = useTranslations("Booking");
   const dispatch = useAppDispatch();
   const { bookingData, loading: bookingLoading, error: bookingError } = useAppSelector((state) => state.booking);
-  
+
   const [step, setStep] = useState<Step>(1);
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleType>("MOTORBIKE");
   const [hasSubmitted, setHasSubmitted] = useState(false);
+
+  const stepLabels = [
+    { num: 1, label: t("step1"), icon: FileText },
+    { num: 2, label: t("step2"), icon: User },
+    { num: 3, label: t("step3"), icon: MapPin },
+    { num: 4, label: t("step4"), icon: Package },
+    { num: 5, label: t("step5"), icon: CreditCard },
+    { num: 6, label: t("step6"), icon: Check },
+  ];
+
+  const contentCategories = [
+    { label: t("catDocuments"), value: "Documents" },
+    { label: t("catCommercial"), value: "Commercial goods" },
+    { label: t("catPersonal"), value: "Personal effects" },
+    { label: t("catElectronics"), value: "Electronics" },
+    { label: t("catClothing"), value: "Clothing & textiles" },
+    { label: t("catFood"), value: "Food & spices" },
+    { label: t("catBooks"), value: "Books & printed material" },
+    { label: t("catMedical"), value: "Medical supplies" },
+    { label: t("catOther"), value: "Other" },
+  ];
+
+  const paymentMethods = [
+    { id: "CASH" as PaymentMethod, label: t("cash"), desc: t("cashDesc"), icon: Wallet },
+    { id: "TELEBIRR" as PaymentMethod, label: t("telebirr"), desc: t("telebirrDesc"), icon: Phone },
+    { id: "CBE_BIRR" as PaymentMethod, label: t("cbeBirr"), desc: t("cbeBirrDesc"), icon: Building },
+  ];
+
+  const VEHICLE_LABELS: Record<VehicleType, string> = {
+    MOTORBIKE: t("motorbike"),
+    BICYCLE: t("bicycle"),
+    FOOT: t("foot"),
+  };
+
+  const VEHICLE_TIMES: Record<VehicleType, string> = {
+    MOTORBIKE: t("estMotorbike"),
+    BICYCLE: t("estBicycle"),
+    FOOT: t("estFoot"),
+  };
 
   const [sender, setSender] = useState({
     fullName: "",
@@ -228,8 +236,8 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
       <div className="relative bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10 shrink-0">
           <div>
-            <h3 className="text-lg font-bold text-black dark:text-white">Book a Shipment</h3>
-            <p className="text-xs text-black/40 dark:text-white/40 mt-0.5">Step {step} of 6</p>
+            <h3 className="text-lg font-bold text-black dark:text-white">{t("title")}</h3>
+            <p className="text-xs text-black/40 dark:text-white/40 mt-0.5">{t("stepLabel")} {step} {t("of")} 6</p>
           </div>
           <button onClick={handleClose} className="p-1.5 text-black/30 dark:text-white/30 hover:text-black dark:hover:text-white transition-colors rounded-lg hover:bg-black/5 dark:hover:bg-white/5">
             <X className="w-5 h-5" />
@@ -258,8 +266,8 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
           {step === 1 && selectedQuote && (
             <div className="space-y-5">
               <div>
-                <h4 className="text-base font-bold text-black dark:text-white mb-1">Review your quote</h4>
-                <p className="text-xs text-black/40 dark:text-white/40">Choose a delivery method for your shipment.</p>
+                <h4 className="text-base font-bold text-black dark:text-white mb-1">{t("reviewQuote")}</h4>
+                <p className="text-xs text-black/40 dark:text-white/40">{t("reviewQuoteDesc")}</p>
               </div>
 
               <div className="bg-black/[0.02] dark:bg-white/[0.03] rounded-xl p-4 border border-black/5 dark:border-white/10">
@@ -279,7 +287,7 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
                   </div>
                 </div>
                 <div className="text-xs text-black/30 dark:text-white/30 mt-2 text-center">
-                  {selectedQuote.distanceKm.toFixed(1)}km · {quoteDetails.weight}kg
+                  {selectedQuote.distanceKm.toFixed(1)}km · {quoteDetails.weight}{t("weight")}
                 </div>
               </div>
 
@@ -310,7 +318,7 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
 
               <div className="flex items-start gap-2 text-xs text-black/30 dark:text-white/30">
                 <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>Price includes delivery and handling. Breakdown: Base fare ETB {selectedQuote.breakdown.baseFare.toFixed(2)} + Distance charge ETB {selectedQuote.breakdown.distanceCharge.toFixed(2)}</span>
+                <span>{t("priceIncludes")} Breakdown: {t("baseFare")} ETB {selectedQuote.breakdown.baseFare.toFixed(2)} + {t("distanceCharge")} ETB {selectedQuote.breakdown.distanceCharge.toFixed(2)}</span>
               </div>
             </div>
           )}
@@ -318,32 +326,32 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
           {step === 2 && (
             <div className="space-y-4">
               <div>
-                <h4 className="text-base font-bold text-black dark:text-white mb-1">Sender details</h4>
-                <p className="text-xs text-black/40 dark:text-white/40">Who is sending this shipment?</p>
+                <h4 className="text-base font-bold text-black dark:text-white mb-1">{t("senderDetails")}</h4>
+                <p className="text-xs text-black/40 dark:text-white/40">{t("senderDetailsDesc")}</p>
               </div>
               <div>
-                <label className={labelClass}>Full Name *</label>
-                <input type="text" value={sender.fullName} onChange={(e) => setSender({ ...sender, fullName: e.target.value })} placeholder="Your full name" className={inputClass} />
+                <label className={labelClass}>{t("fullName")} *</label>
+                <input type="text" value={sender.fullName} onChange={(e) => setSender({ ...sender, fullName: e.target.value })} placeholder={t("yourName")} className={inputClass} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>Phone Number *</label>
-                  <input type="tel" value={sender.phone} onChange={(e) => setSender({ ...sender, phone: e.target.value })} placeholder="+251 9XX XXX XXXX" className={inputClass} />
+                  <label className={labelClass}>{t("phoneNumber")} *</label>
+                  <input type="tel" value={sender.phone} onChange={(e) => setSender({ ...sender, phone: e.target.value })} placeholder={t("phonePlaceholder")} className={inputClass} />
                 </div>
                 <div>
-                  <label className={labelClass}>Email *</label>
-                  <input type="email" value={sender.email} onChange={(e) => setSender({ ...sender, email: e.target.value })} placeholder="you@email.com" className={inputClass} />
+                  <label className={labelClass}>{t("email")} *</label>
+                  <input type="email" value={sender.email} onChange={(e) => setSender({ ...sender, email: e.target.value })} placeholder={t("emailPlaceholder")} className={inputClass} />
                 </div>
               </div>
               <div>
-                <label className={labelClass}>Pickup Address *</label>
+                <label className={labelClass}>{t("pickupAddress")} *</label>
                 <LocationAutocomplete
                   value={sender.address}
                   onChange={(addr, coords) => {
                     setSender((s) => ({ ...s, address: addr }));
                     if (coords) setSenderCoords(coords);
                   }}
-                  placeholder="Search pickup location"
+                  placeholder={t("searchPickup")}
                 />
               </div>
             </div>
@@ -352,32 +360,32 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
           {step === 3 && (
             <div className="space-y-4">
               <div>
-                <h4 className="text-base font-bold text-black dark:text-white mb-1">Recipient details</h4>
-                <p className="text-xs text-black/40 dark:text-white/40">Who is receiving this shipment?</p>
+                <h4 className="text-base font-bold text-black dark:text-white mb-1">{t("recipientDetails")}</h4>
+                <p className="text-xs text-black/40 dark:text-white/40">{t("recipientDetailsDesc")}</p>
               </div>
               <div>
-                <label className={labelClass}>Full Name *</label>
-                <input type="text" value={recipient.fullName} onChange={(e) => setRecipient({ ...recipient, fullName: e.target.value })} placeholder="Recipient's full name" className={inputClass} />
+                <label className={labelClass}>{t("fullName")} *</label>
+                <input type="text" value={recipient.fullName} onChange={(e) => setRecipient({ ...recipient, fullName: e.target.value })} placeholder={t("recipientName")} className={inputClass} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>Phone Number *</label>
-                  <input type="tel" value={recipient.phone} onChange={(e) => setRecipient({ ...recipient, phone: e.target.value })} placeholder="+251 9XX XXX XXXX" className={inputClass} />
+                  <label className={labelClass}>{t("phoneNumber")} *</label>
+                  <input type="tel" value={recipient.phone} onChange={(e) => setRecipient({ ...recipient, phone: e.target.value })} placeholder={t("recipientPhonePlaceholder")} className={inputClass} />
                 </div>
                 <div>
-                  <label className={labelClass}>Email *</label>
-                  <input type="email" value={recipient.email} onChange={(e) => setRecipient({ ...recipient, email: e.target.value })} placeholder="recipient@email.com" className={inputClass} />
+                  <label className={labelClass}>{t("email")} *</label>
+                  <input type="email" value={recipient.email} onChange={(e) => setRecipient({ ...recipient, email: e.target.value })} placeholder={t("recipientEmailPlaceholder")} className={inputClass} />
                 </div>
               </div>
               <div>
-                <label className={labelClass}>Delivery Address *</label>
+                <label className={labelClass}>{t("deliveryAddress")} *</label>
                 <LocationAutocomplete
                   value={recipient.address}
                   onChange={(addr, coords) => {
                     setRecipient((r) => ({ ...r, address: addr }));
                     if (coords) setRecipientCoords(coords);
                   }}
-                  placeholder="Search delivery location"
+                  placeholder={t("searchDelivery")}
                 />
               </div>
             </div>
@@ -386,30 +394,30 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
           {step === 4 && (
             <div className="space-y-4">
               <div>
-                <h4 className="text-base font-bold text-black dark:text-white mb-1">Package details</h4>
-                <p className="text-xs text-black/40 dark:text-white/40">Tell us what you&apos;re sending.</p>
+                <h4 className="text-base font-bold text-black dark:text-white mb-1">{t("packageDetails")}</h4>
+                <p className="text-xs text-black/40 dark:text-white/40">{t("packageDetailsDesc")}</p>
               </div>
               <div>
-                <label className={labelClass}>Content Category *</label>
+                <label className={labelClass}>{t("contentCategory")} *</label>
                 <select value={packageDetails.contentCategory} onChange={(e) => setPackageDetails({ ...packageDetails, contentCategory: e.target.value })} className={selectClass}>
-                  <option value="">What are you sending?</option>
-                  {contentCategories.map((cat) => <option key={cat}>{cat}</option>)}
+                  <option value="">{t("whatSending")}</option>
+                  {contentCategories.map((cat) => <option key={cat.value}>{cat.label}</option>)}
                 </select>
               </div>
               <div>
-                <label className={labelClass}>Declared Value (USD) *</label>
-                <input type="number" value={packageDetails.declaredValue} onChange={(e) => setPackageDetails({ ...packageDetails, declaredValue: e.target.value })} placeholder="e.g. 150" min="0" step="1" className={inputClass} />
-                <p className="text-[10px] text-black/25 dark:text-white/25 mt-1">For insurance purposes.</p>
+                <label className={labelClass}>{t("declaredValue")} *</label>
+                <input type="number" value={packageDetails.declaredValue} onChange={(e) => setPackageDetails({ ...packageDetails, declaredValue: e.target.value })} placeholder={t("declaredPlaceholder")} min="0" step="1" className={inputClass} />
+                <p className="text-[10px] text-black/25 dark:text-white/25 mt-1">{t("insuranceNote")}</p>
               </div>
               <div>
-                <label className={labelClass}>Description</label>
-                <textarea rows={2} value={packageDetails.description} onChange={(e) => setPackageDetails({ ...packageDetails, description: e.target.value })} placeholder="Brief description of contents" className={`${inputClass} resize-none`} />
+                <label className={labelClass}>{t("description")}</label>
+                <textarea rows={2} value={packageDetails.description} onChange={(e) => setPackageDetails({ ...packageDetails, description: e.target.value })} placeholder={t("descPlaceholder")} className={`${inputClass} resize-none`} />
               </div>
               <label className="flex items-center gap-3 cursor-pointer">
                 <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${packageDetails.fragile ? "bg-brand-red border-brand-red" : "border-black/15 dark:border-white/15"}`} onClick={() => setPackageDetails({ ...packageDetails, fragile: !packageDetails.fragile })}>
                   {packageDetails.fragile && <Check className="w-3 h-3 text-white" />}
                 </div>
-                <span className="text-sm text-black/60 dark:text-white/60">Mark as fragile</span>
+                <span className="text-sm text-black/60 dark:text-white/60">{t("markFragile")}</span>
               </label>
             </div>
           )}
@@ -417,8 +425,8 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
           {step === 5 && selectedQuote && (
             <div className="space-y-5">
               <div>
-                <h4 className="text-base font-bold text-black dark:text-white mb-1">Payment method</h4>
-                <p className="text-xs text-black/40 dark:text-white/40">How would you like to pay for this shipment?</p>
+                <h4 className="text-base font-bold text-black dark:text-white mb-1">{t("paymentMethod")}</h4>
+                <p className="text-xs text-black/40 dark:text-white/40">{t("paymentMethodDesc")}</p>
               </div>
               <div className="space-y-3">
                 {paymentMethods.map((method) => (
@@ -438,10 +446,10 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
               </div>
 
               <div className="bg-black/[0.02] dark:bg-white/[0.03] rounded-xl p-4 border border-black/5 dark:border-white/10">
-                <div className="text-[11px] font-semibold text-black/30 dark:text-white/30 uppercase tracking-wider mb-3">Order Summary</div>
+                <div className="text-[11px] font-semibold text-black/30 dark:text-white/30 uppercase tracking-wider mb-3">{t("orderSummary")}</div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-black/50 dark:text-white/50">{VEHICLE_LABELS[selectedVehicle]} shipping ({quoteDetails.weight}kg)</span>
+                    <span className="text-black/50 dark:text-white/50">{VEHICLE_LABELS[selectedVehicle]} {t("shipping")} ({quoteDetails.weight}{t("weight")})</span>
                     <span className="font-semibold text-black dark:text-white">${selectedQuote.price}</span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -450,7 +458,7 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
                   </div>
                   <div className="border-t border-black/5 dark:border-white/10 pt-2 mt-2">
                     <div className="flex justify-between">
-                      <span className="text-sm font-bold text-black dark:text-white">Total</span>
+                      <span className="text-sm font-bold text-black dark:text-white">{t("total")}</span>
                       <span className="text-lg font-black text-brand-red">${selectedQuote.price}</span>
                     </div>
                   </div>
@@ -465,38 +473,38 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
                 <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <h4 className="text-xl font-bold text-black dark:text-white">Booking Confirmed!</h4>
-                <p className="text-sm text-black/40 dark:text-white/40 mt-1">Your shipment has been booked successfully.</p>
+                <h4 className="text-xl font-bold text-black dark:text-white">{t("confirmed")}</h4>
+                <p className="text-sm text-black/40 dark:text-white/40 mt-1">{t("confirmedDesc")}</p>
               </div>
 
               <div className="bg-black/[0.02] dark:bg-white/[0.03] rounded-xl p-5 border border-black/5 dark:border-white/10">
-                <div className="text-[10px] text-black/30 dark:text-white/30 uppercase tracking-widest font-semibold mb-2">Tracking Number</div>
+                <div className="text-[10px] text-black/30 dark:text-white/30 uppercase tracking-widest font-semibold mb-2">{t("trackingNumber")}</div>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-2xl font-black text-brand-red font-mono">{bookingData.trackingNumber}</span>
-                  <button onClick={() => { navigator.clipboard.writeText(bookingData.trackingNumber); toast("Tracking number copied!"); }} className="p-1.5 text-black/20 dark:text-white/20 hover:text-brand-red transition-colors">
+                  <button onClick={() => { navigator.clipboard.writeText(bookingData.trackingNumber); toast(t("copied")); }} className="p-1.5 text-black/20 dark:text-white/20 hover:text-brand-red transition-colors">
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
               <div className="bg-black/[0.02] dark:bg-white/[0.03] rounded-xl p-4 border border-black/5 dark:border-white/10 text-left">
-                <div className="text-[10px] text-black/30 dark:text-white/30 uppercase tracking-widest font-semibold mb-3">Shipment Details</div>
+                <div className="text-[10px] text-black/30 dark:text-white/30 uppercase tracking-widest font-semibold mb-3">{t("shipmentDetails")}</div>
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">From</div><div className="font-medium text-black dark:text-white">{quoteDetails.from}</div></div>
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">To</div><div className="font-medium text-black dark:text-white">{quoteDetails.to}</div></div>
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">Method</div><div className="font-medium text-black dark:text-white">{VEHICLE_LABELS[selectedVehicle]}</div></div>
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">Distance</div><div className="font-medium text-black dark:text-white">{(bookingData.distanceMeters / 1000).toFixed(1)}km</div></div>
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">Weight</div><div className="font-medium text-black dark:text-white">{quoteDetails.weight}kg</div></div>
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">Total</div><div className="font-bold text-brand-red">${bookingData.price}</div></div>
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">Sender</div><div className="font-medium text-black dark:text-white">{sender.fullName}</div></div>
-                  <div><div className="text-black/30 dark:text-white/30 text-xs">Recipient</div><div className="font-medium text-black dark:text-white">{recipient.fullName}</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("from")}</div><div className="font-medium text-black dark:text-white">{quoteDetails.from}</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("to")}</div><div className="font-medium text-black dark:text-white">{quoteDetails.to}</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("method")}</div><div className="font-medium text-black dark:text-white">{VEHICLE_LABELS[selectedVehicle]}</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("distance")}</div><div className="font-medium text-black dark:text-white">{(bookingData.distanceMeters / 1000).toFixed(1)}km</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("weight")}</div><div className="font-medium text-black dark:text-white">{quoteDetails.weight}{t("weight")}</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("total")}</div><div className="font-bold text-brand-red">${bookingData.price}</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("sender")}</div><div className="font-medium text-black dark:text-white">{sender.fullName}</div></div>
+                  <div><div className="text-black/30 dark:text-white/30 text-xs">{t("recipient")}</div><div className="font-medium text-black dark:text-white">{recipient.fullName}</div></div>
                 </div>
               </div>
 
               <div className="bg-brand-red/5 dark:bg-brand-red/10 rounded-xl p-4 border border-brand-red/10 text-left">
-                <div className="text-sm font-bold text-black dark:text-white mb-2">What happens next?</div>
+                <div className="text-sm font-bold text-black dark:text-white mb-2">{t("whatNext")}</div>
                 <div className="space-y-2">
-                  {[{ step: "1", text: "Confirmation sent to " + sender.email }, { step: "2", text: "Our team will contact you to arrange pickup" }, { step: "3", text: "Track your shipment with " + bookingData.trackingNumber }].map((item) => (
+                  {[{ step: "1", text: t("nextStep1") + " " + sender.email }, { step: "2", text: t("nextStep2") }, { step: "3", text: t("nextStep3") + " " + bookingData.trackingNumber }].map((item) => (
                     <div key={item.step} className="flex items-start gap-2">
                       <span className="w-5 h-5 rounded-full bg-brand-red/10 flex items-center justify-center shrink-0 text-[10px] font-bold text-brand-red">{item.step}</span>
                       <span className="text-xs text-black/50 dark:text-white/50 leading-relaxed">{item.text}</span>
@@ -505,7 +513,7 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
                 </div>
               </div>
 
-              <button onClick={handleClose} className="w-full bg-brand-red hover:bg-brand-red-dark text-white py-3.5 font-semibold rounded-xl transition-colors text-sm">Done</button>
+              <button onClick={handleClose} className="w-full bg-brand-red hover:bg-brand-red-dark text-white py-3.5 font-semibold rounded-xl transition-colors text-sm">{t("done")}</button>
             </div>
           )}
         </div>
@@ -515,20 +523,20 @@ export function BookingModal({ isOpen, onClose, quoteDetails }: BookingModalProp
             <div className="flex items-center justify-between gap-3">
               {step > 1 ? (
                 <button onClick={handleBack} className="flex items-center gap-2 px-5 py-3 text-sm font-medium text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors rounded-xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04]">
-                  <ArrowLeft className="w-4 h-4" /> Back
+                  <ArrowLeft className="w-4 h-4" /> {t("back")}
                 </button>
               ) : <div />}
               {step < 5 ? (
                 <button onClick={handleNext} disabled={!canProceed()} className="flex items-center gap-2 bg-brand-red hover:bg-brand-red-dark disabled:bg-black/10 disabled:dark:bg-white/10 text-white disabled:text-black/25 disabled:dark:text-white/25 px-8 py-3 font-semibold rounded-xl transition-all text-sm shadow-lg shadow-brand-red/20 disabled:shadow-none">
-                  Continue <ArrowRight className="w-4 h-4" />
+                  {t("continue")} <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button onClick={handleSubmit} disabled={!canProceed() || bookingLoading} className="flex items-center gap-2 bg-brand-red hover:bg-brand-red-dark disabled:bg-black/10 disabled:dark:bg-white/10 text-white disabled:text-black/25 disabled:dark:text-white/25 px-8 py-3 font-semibold rounded-xl transition-all text-sm shadow-lg shadow-brand-red/20 disabled:shadow-none">
                   {bookingLoading ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" />Processing...</>
+                    <><Loader2 className="w-4 h-4 animate-spin" />{t("processing")}</>
                   ) : (
-                    <>Confirm Booking <Check className="w-4 h-4" />
-                  </>)}
+                    <>{t("confirmBooking")} <Check className="w-4 h-4" />
+                    </>)}
                 </button>
               )}
             </div>

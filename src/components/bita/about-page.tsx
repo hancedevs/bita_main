@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   Target,
   Eye,
@@ -13,44 +14,91 @@ import {
   Warehouse,
   ClipboardCheck,
   MapPin,
+  Star,
 } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const galleryImages = [
+  {
+    url: "/assets/arlind-photography-7z1sdaLl4wM-unsplash.jpg",
+    title: "Global Logistics",
+  },
+  {
+    url: "/assets/bernd-dittrich-3jtEN0ZxT4Y-unsplash.jpg",
+    title: "Air Freight",
+  },
+  {
+    url: "/assets/rifki-kurniawan-k63Or81F8-M-unsplash.jpg",
+    title: "Fleet Operations",
+  },
+  {
+    url: "/assets/rowan-freeman-clYlmCaQbzY-unsplash.jpg",
+    title: "Warehousing",
+  },
+];
 
 export function AboutPage() {
+  const t = useTranslations("AboutPage");
+  const [api, setApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (!api) return;
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [api]);
+
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-500">
       {/* Hero Banner */}
       <section className="relative overflow-hidden py-20 md:py-28">
         {/* Map Background Image */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 map-bg-light dark:hidden" />
-          <div className="absolute inset-0 map-bg-dark hidden dark:block" />
+        <div className="absolute inset-0 bg-white dark:bg-black">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.2] dark:opacity-[0.4]"
+            poster="https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=2070&auto=format&fit=crop"
+          >
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-commercial-airplane-in-flight-at-sunset-10023-large.mp4" type="video/mp4" />
+          </video>
           {/* Light mode: white frosted overlay */}
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] dark:hidden" />
-          {/* Dark mode: reduced overlay to show map */}
-          <div className="absolute inset-0 bg-black/35 hidden dark:block" />
+          {/* Dark mode: stark contrast overlay */}
+          <div className="absolute inset-0 bg-black/60 hidden dark:block" />
           {/* Subtle red radial glow */}
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-red rounded-full blur-[200px] opacity-[0.06] dark:opacity-[0.08] pointer-events-none" />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
           <div className="flex justify-center mb-8">
             <img
-              src="https://z-cdn-media.chatglm.cn/files/aadb4316-9e0c-4244-832d-fdb53765d1ed.png?auth_key=1877574723-2941d9d585774f4f97ed9c01016d4d86-0-e56397bb508db8ef7277ffdff393dce4"
+              src="/assets/BE%20Logo%20(No%20BG,%20Full,%20Dark).svg"
               alt="BITA Express Logo"
               className="h-16 md:h-20 w-auto object-contain dark:brightness-0 dark:invert"
             />
           </div>
           <span className="inline-block text-black/70 dark:text-white/70 text-xs font-semibold tracking-[0.2em] uppercase mb-4">
-            About BITA Express
+            {t("heroBadge")}
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-black dark:text-white leading-tight tracking-tight">
-            Connecting Ethiopia
-            <br />
-            to the world.
+            {t("heroHeading")}
           </h1>
           <p className="text-base md:text-lg text-black/70 dark:text-white/70 mt-6 max-w-2xl mx-auto leading-relaxed">
-            Since our founding, BITA Express has been dedicated to making
-            international shipping accessible, reliable, and transparent for
-            everyone in Ethiopia.
+            {t("heroSubtitle")}
           </p>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
@@ -64,48 +112,39 @@ export function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
               <span className="inline-block text-[11px] font-semibold tracking-widest uppercase text-brand-red mb-3">
-                Who We Are
+                {t("whoBadge")}
               </span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-black dark:text-white leading-tight tracking-tight">
-                Ethiopia&apos;s trusted
-                <br />
-                shipping partner.
+                {t("whoHeading")}
               </h2>
               <p className="text-base text-black/50 dark:text-white/50 mt-5 leading-relaxed">
-                BITA Express is a full-service logistics company headquartered
-                in Addis Ababa, Ethiopia. We specialize in international parcel
-                delivery, freight forwarding, and e-commerce fulfillment —
-                connecting Ethiopian businesses and individuals to over 200
-                destinations worldwide.
+                {t("whoDesc1")}
               </p>
               <p className="text-base text-black/50 dark:text-white/50 mt-4 leading-relaxed">
-                Whether you&apos;re a small business shipping your first order
-                abroad or a large enterprise managing complex supply chains, we
-                provide the infrastructure, technology, and personal support to
-                make it seamless.
+                {t("whoDesc2")}
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
                 {
                   icon: Package,
-                  value: "2M+",
-                  label: "Packages delivered",
+                  value: t("valPackages"),
+                  label: t("statPackages"),
                 },
                 {
                   icon: Globe2,
-                  value: "200+",
-                  label: "Destinations",
+                  value: t("valDestinations"),
+                  label: t("statDestinations"),
                 },
                 {
                   icon: Users,
-                  value: "500+",
-                  label: "Team members",
+                  value: t("valTeam"),
+                  label: t("statTeam"),
                 },
                 {
                   icon: Award,
-                  value: "12+",
-                  label: "Years of service",
+                  value: t("valYears"),
+                  label: t("statYears"),
                 },
               ].map((stat) => (
                 <div
@@ -126,6 +165,40 @@ export function AboutPage() {
         </div>
       </section>
 
+      {/* Culture & Operations Gallery Slider */}
+      <section className="py-0 overflow-hidden w-full">
+        <Carousel
+          setApi={setApi}
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-0">
+            {galleryImages.map((image, index) => (
+              <CarouselItem key={index} className="pl-0 basis-full md:basis-1/2 lg:basis-1/3">
+                <div className="relative group overflow-hidden h-[250px] md:h-[350px]">
+                  <img
+                    src={image.url}
+                    alt={image.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-500" />
+                  <div className="absolute bottom-10 left-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                    <h4 className="text-white text-2xl font-black tracking-tight">{image.title}</h4>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="absolute bottom-10 right-10 flex gap-2">
+            <CarouselPrevious className="relative left-0 translate-y-0 bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-brand-red hover:border-brand-red size-12" />
+            <CarouselNext className="relative right-0 translate-y-0 bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-brand-red hover:border-brand-red size-12" />
+          </div>
+        </Carousel>
+      </section>
+
       {/* Mission & Vision */}
       <section className="py-16 md:py-24 bg-black/[0.02] dark:bg-white/[0.02] transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-6">
@@ -135,14 +208,10 @@ export function AboutPage() {
                 <Target className="w-6 h-6 text-brand-red" />
               </div>
               <h3 className="text-xl font-bold text-black dark:text-white mb-3">
-                Our Mission
+                {t("missionTitle")}
               </h3>
               <p className="text-sm text-black/50 dark:text-white/50 leading-relaxed">
-                To democratize international shipping for Ethiopia by providing
-                affordable, transparent, and reliable logistics services that
-                empower businesses of all sizes to compete globally. We believe
-                every Ethiopian entrepreneur deserves access to world-class
-                shipping infrastructure.
+                {t("missionDesc")}
               </p>
             </div>
             <div className="bg-white dark:bg-black rounded-2xl border border-black/6 dark:border-white/10 p-8 md:p-10">
@@ -150,13 +219,10 @@ export function AboutPage() {
                 <Eye className="w-6 h-6 text-brand-red" />
               </div>
               <h3 className="text-xl font-bold text-black dark:text-white mb-3">
-                Our Vision
+                {t("visionTitle")}
               </h3>
               <p className="text-sm text-black/50 dark:text-white/50 leading-relaxed">
-                To become Africa&apos;s most trusted logistics platform, known
-                for innovation, speed, and unwavering commitment to customer
-                success. We envision a future where distance is never a barrier
-                to trade, connection, or opportunity for the African continent.
+                {t("visionDesc")}
               </p>
             </div>
           </div>
@@ -168,14 +234,13 @@ export function AboutPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <span className="inline-block text-[11px] font-semibold tracking-widest uppercase text-brand-red mb-3">
-              What We Do
+              {t("processBadge")}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-black dark:text-white tracking-tight">
-              End-to-end logistics solutions.
+              {t("processHeading")}
             </h2>
             <p className="text-base text-black/40 dark:text-white/40 mt-3 max-w-lg mx-auto">
-              From pickup to delivery, we handle every step so you can focus on
-              what matters most.
+              {t("processSubtitle")}
             </p>
           </div>
 
@@ -195,8 +260,8 @@ export function AboutPage() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-10">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-brand-red shadow-lg shadow-brand-red/30" />
-                  <span className="text-sm font-bold text-black dark:text-white">Addis Ababa</span>
-                  <span className="text-xs text-black/30 dark:text-white/30">Ethiopia</span>
+                  <span className="text-sm font-bold text-black dark:text-white">{t("originCity")}</span>
+                  <span className="text-xs text-black/30 dark:text-white/30">{t("originCountry")}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-8 h-px bg-brand-red/20" />
@@ -212,8 +277,8 @@ export function AboutPage() {
                   <div className="w-8 h-px bg-brand-red/20" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-black/30 dark:text-white/30">Worldwide</span>
-                  <span className="text-sm font-bold text-black dark:text-white">200+ Destinations</span>
+                  <span className="text-xs text-black/30 dark:text-white/30">{t("destWorldwide")}</span>
+                  <span className="text-sm font-bold text-black dark:text-white">{t("destCount")}</span>
                   <span className="w-3 h-3 rounded-full bg-blue-500 shadow-lg shadow-blue-500/30" />
                 </div>
               </div>
@@ -230,9 +295,9 @@ export function AboutPage() {
                     <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-brand-red text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md">1</div>
                   </div>
                   <div className="md:mt-4">
-                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">Book & Pick Up</h4>
+                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">{t("step1Title")}</h4>
                     <p className="text-xs text-black/40 dark:text-white/40 leading-relaxed max-w-[200px] md:mx-auto">
-                      Schedule online or by phone. We collect from your door anywhere in Addis Ababa.
+                      {t("step1Desc")}
                     </p>
                   </div>
                   {/* Arrow connector - desktop only */}
@@ -250,9 +315,9 @@ export function AboutPage() {
                     <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-brand-red text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md">2</div>
                   </div>
                   <div className="md:mt-4">
-                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">Sort & Process</h4>
+                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">{t("step2Title")}</h4>
                     <p className="text-xs text-black/40 dark:text-white/40 leading-relaxed max-w-[200px] md:mx-auto">
-                      Weigh, label, and sort at our central hub. Full documentation and customs preparation.
+                      {t("step2Desc")}
                     </p>
                   </div>
                   <div className="hidden md:flex absolute top-8 -right-3 items-center">
@@ -269,9 +334,9 @@ export function AboutPage() {
                     <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-brand-red-dark text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md">3</div>
                   </div>
                   <div className="md:mt-4">
-                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">International Transit</h4>
+                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">{t("step3Title")}</h4>
                     <p className="text-xs text-black/40 dark:text-white/40 leading-relaxed max-w-[200px] md:mx-auto">
-                      Air or sea freight via partner airlines. Live tracking at every checkpoint worldwide.
+                      {t("step3Desc")}
                     </p>
                   </div>
                   <div className="hidden md:flex absolute top-8 -right-3 items-center">
@@ -288,9 +353,9 @@ export function AboutPage() {
                     <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-brand-red text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md">4</div>
                   </div>
                   <div className="md:mt-4">
-                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">Customs Clearance</h4>
+                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">{t("step4Title")}</h4>
                     <p className="text-xs text-black/40 dark:text-white/40 leading-relaxed max-w-[200px] md:mx-auto">
-                      Licensed brokers handle all documentation, duties, and regulatory compliance.
+                      {t("step4Desc")}
                     </p>
                   </div>
                   <div className="hidden md:flex absolute top-8 -right-3 items-center">
@@ -307,9 +372,9 @@ export function AboutPage() {
                     <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-brand-red text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md">5</div>
                   </div>
                   <div className="md:mt-4">
-                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">Last-Mile Delivery</h4>
+                    <h4 className="text-sm font-bold text-black dark:text-white mb-1">{t("step5Title")}</h4>
                     <p className="text-xs text-black/40 dark:text-white/40 leading-relaxed max-w-[200px] md:mx-auto">
-                      Door-to-door delivery with proof of delivery, SMS alerts, and signature capture.
+                      {t("step5Desc")}
                     </p>
                   </div>
                 </div>
@@ -319,20 +384,20 @@ export function AboutPage() {
               <div className="mt-8 pt-6 border-t border-black/5 dark:border-white/10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-black text-brand-red">200+</div>
-                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">Global Destinations</div>
+                    <div className="text-2xl font-black text-brand-red">{t("valGlobalDest")}</div>
+                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">{t("barDest")}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-black text-brand-red">1-5</div>
-                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">Days Express Delivery</div>
+                    <div className="text-2xl font-black text-brand-red">{t("valDays")}</div>
+                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">{t("barDays")}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-black text-brand-red">5+</div>
-                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">Branches in Addis</div>
+                    <div className="text-2xl font-black text-brand-red">{t("valBranches")}</div>
+                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">{t("barBranches")}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-black text-brand-red">24/7</div>
-                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">Real-Time Tracking</div>
+                    <div className="text-2xl font-black text-brand-red">{t("valTracking")}</div>
+                    <div className="text-xs text-black/35 dark:text-white/35 mt-0.5">{t("barTracking")}</div>
                   </div>
                 </div>
               </div>
@@ -344,21 +409,21 @@ export function AboutPage() {
             {[
               {
                 icon: Ship,
-                title: "International Express",
-                desc: "Door-to-door express delivery to 200+ countries with real-time tracking and customs clearance included.",
-                detail: "From ETB 18/kg",
+                title: t("servExpressTitle"),
+                desc: t("servExpressDesc"),
+                detail: t("servExpressDetail"),
               },
               {
                 icon: Truck,
-                title: "Freight Forwarding",
-                desc: "Air and sea freight solutions for businesses moving large volumes, with competitive rates and dedicated support.",
-                detail: "Custom pricing",
+                title: t("servFreightTitle"),
+                desc: t("servFreightDesc"),
+                detail: t("servFreightDetail"),
               },
               {
                 icon: Package,
-                title: "E-commerce Fulfillment",
-                desc: "API integration with Shopify, WooCommerce, and custom stores. Auto-label generation and bulk processing.",
-                detail: "Scalable plans",
+                title: t("servEcomTitle"),
+                desc: t("servEcomDesc"),
+                detail: t("servEcomDetail"),
               },
             ].map((item) => (
               <div
@@ -385,28 +450,112 @@ export function AboutPage() {
         </div>
       </section>
 
+      {/* Reviews & Testimonials Section */}
+      <section id="reviews" className="py-20 md:py-32 bg-black/[0.02] dark:bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Heading & Info */}
+            <div>
+              <span className="inline-block text-[11px] font-semibold tracking-widest uppercase text-brand-red mb-3">
+                {t("reviewsBadge")}
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-black dark:text-white leading-tight tracking-tight">
+                {t("reviewsHeading")}
+              </h2>
+              <div className="mt-8 flex items-center gap-4">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                      <img src={`https://i.pravatar.cc/150?u=${i}`} alt="user" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="w-4 h-4 fill-brand-red text-brand-red" />
+                    ))}
+                  </div>
+                  <p className="text-xs text-black/50 dark:text-white/40 mt-1">
+                    Trusted by 5,000+ customers
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Glass Review Form */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-brand-red/5 rounded-[2rem] blur-3xl -z-10" />
+              <div className="bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl">
+                <h3 className="text-xl font-bold text-black dark:text-white mb-6">
+                  {t("writeReview")}
+                </h3>
+                <form className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-black/40 dark:text-white/40">
+                      {t("yourName")}
+                    </label>
+                    <Input
+                      placeholder={t("yourName")}
+                      className="bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/10 focus:border-brand-red/50 transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-black/40 dark:text-white/40">
+                      {t("ratingLabel")}
+                    </label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          className="text-black/20 dark:text-white/20 hover:text-brand-red transition-colors"
+                        >
+                          <Star className="w-6 h-6" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-black/40 dark:text-white/40">
+                      {t("yourMessage")}
+                    </label>
+                    <Textarea
+                      placeholder={t("reviewPlaceholder")}
+                      className="min-h-[120px] bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/10 focus:border-brand-red/50 transition-all"
+                    />
+                  </div>
+                  <Button className="w-full bg-brand-red hover:bg-black dark:hover:bg-white dark:hover:text-black py-6 text-base font-bold transition-all duration-300">
+                    {t("submitReview")}
+                  </Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 md:py-24">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold text-black dark:text-white tracking-tight">
-            Ready to ship?
+            {t("ctaHeading")}
           </h2>
           <p className="text-base text-black/40 dark:text-white/40 mt-3 max-w-md mx-auto">
-            Join thousands of businesses and individuals who trust BITA Express
-            with their international shipments.
+            {t("ctaSubtitle")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="#"
               className="bg-brand-red hover:bg-brand-red-dark text-white px-8 py-3.5 font-semibold rounded-xl transition-colors text-sm inline-flex items-center justify-center gap-2"
             >
-              Get Started
+              {t("ctaGetStarted")}
             </a>
             <a
-              href="tel:+251 94 676 6667"
+              href="tel:+251946766667"
               className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white px-8 py-3.5 font-semibold rounded-xl transition-colors text-sm inline-flex items-center justify-center gap-2 border border-black/10 dark:border-white/10"
             >
-              Call Us: +251 94 676 6667
+              {t("ctaCall")}
             </a>
           </div>
         </div>

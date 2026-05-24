@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Navigation } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface ModalProps {
   isOpen: boolean;
@@ -46,52 +47,53 @@ export function PickupModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations("Modals");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onClose();
-    toast("Pickup request submitted! Confirmation sent to your phone.");
+    toast(t("pickupSubmitted"));
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Schedule a Pickup">
+    <Modal isOpen={isOpen} onClose={onClose} title={t("schedulePickup")}>
       <form onSubmit={handleSubmit} className="p-6 space-y-4">
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Full Name *
+            {t("fullName")} *
           </label>
           <input
             type="text"
             required
-            placeholder="Your full name"
+            placeholder={t("yourName")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors"
           />
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Phone Number *
+            {t("phoneNumber")} *
           </label>
           <input
             type="tel"
             required
-            placeholder="+251 9XX XXX XXXX"
+            placeholder={t("phonePlaceholder")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors"
           />
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Pickup Address *
+            {t("pickupAddress")} *
           </label>
           <input
             type="text"
             required
-            placeholder="Full address in Addis Ababa"
+            placeholder={t("addressPlaceholder")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors"
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-              Preferred Date *
+              {t("preferredDate")} *
             </label>
             <input
               type="date"
@@ -101,13 +103,13 @@ export function PickupModal({
           </div>
           <div>
             <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-              Preferred Time *
+              {t("preferredTime")} *
             </label>
             <select
               required
               className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white focus:outline-none focus:border-brand-red transition-colors appearance-none cursor-pointer"
             >
-              <option value="">Select time</option>
+              <option value="">{t("selectTime")}</option>
               <option>8:00 AM – 10:00 AM</option>
               <option>10:00 AM – 12:00 PM</option>
               <option>12:00 PM – 2:00 PM</option>
@@ -118,7 +120,7 @@ export function PickupModal({
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Number of Packages
+            {t("numPackages")}
           </label>
           <input
             type="number"
@@ -129,11 +131,11 @@ export function PickupModal({
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Notes
+            {t("notes")}
           </label>
           <textarea
             rows={2}
-            placeholder="Any special instructions"
+            placeholder={t("notesPlaceholder")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors resize-none"
           />
         </div>
@@ -141,41 +143,14 @@ export function PickupModal({
           type="submit"
           className="w-full bg-brand-red hover:bg-brand-red-dark text-white py-3.5 font-semibold rounded-xl transition-colors text-sm"
         >
-          Confirm Pickup Request
+          {t("confirmPickup")}
         </button>
       </form>
     </Modal>
   );
 }
 
-/* ====== Locations Modal ====== */
-const locations = [
-  {
-    name: "Bole Branch",
-    address: "Near Bole International Airport, Atlas Road",
-    hours: "Mon–Sat · 7:30AM – 7:00PM",
-  },
-  {
-    name: "Kazanchis Branch",
-    address: "Rwanda Street, behind Dembel City Center",
-    hours: "Mon–Sat · 8:00AM – 6:00PM",
-  },
-  {
-    name: "Saris Branch",
-    address: "Mekanisa, Saris-Abo Square",
-    hours: "Mon–Sat · 8:00AM – 6:00PM",
-  },
-  {
-    name: "CMC Branch",
-    address: "CMC Road, near Total Gas Station",
-    hours: "Mon–Sat · 8:00AM – 6:00PM",
-  },
-  {
-    name: "Mercato Branch",
-    address: "2nd Level, Shewa Dabo Building",
-    hours: "Mon–Sat · 8:00AM – 5:30PM",
-  },
-];
+// locations array is moved inside the component to use translations
 
 export function LocationsModal({
   isOpen,
@@ -184,18 +159,47 @@ export function LocationsModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations("Modals");
+
+  const locations = [
+    {
+      name: t("loc1Name"),
+      address: t("loc1Address"),
+      hours: t("loc1Hours"),
+    },
+    {
+      name: t("loc2Name"),
+      address: t("loc2Address"),
+      hours: t("loc2Hours"),
+    },
+    {
+      name: t("loc3Name"),
+      address: t("loc3Address"),
+      hours: t("loc3Hours"),
+    },
+    {
+      name: t("loc4Name"),
+      address: t("loc4Address"),
+      hours: t("loc4Hours"),
+    },
+    {
+      name: t("loc5Name"),
+      address: t("loc5Address"),
+      hours: t("loc5Hours"),
+    },
+  ];
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Drop-off Points in Addis Ababa"
+      title={t("dropoffTitle")}
     >
       <div className="p-4 divide-y divide-black/5 dark:divide-white/10">
         {locations.map((loc) => (
           <button
             key={loc.name}
             onClick={() => {
-              toast(`Opening directions to ${loc.name}...`);
+              toast(`${t("openingDirections")} ${loc.name}...`);
               onClose();
             }}
             className="w-full text-left p-4 rounded-xl hover:bg-black/[0.02] dark:hover:bg-white/[0.04] transition-colors"
@@ -229,62 +233,62 @@ export function RestrictedModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations("Modals");
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Restricted & Prohibited Items"
+      title={t("restrictedTitle")}
     >
       <div className="p-6 space-y-5">
         <div>
           <h4 className="text-sm font-bold text-brand-red mb-2">
-            Cannot ship (prohibited)
+            {t("cannotShip")}
           </h4>
           <ul className="space-y-1.5 text-sm text-black/60 dark:text-white/60">
-            <li>• Explosives, ammunition, fireworks</li>
-            <li>• Flammable liquids & gases</li>
-            <li>• Toxic or infectious substances</li>
-            <li>• Radioactive material</li>
-            <li>• Live animals (use cargo service)</li>
-            <li>• Counterfeit currency or goods</li>
-            <li>• Narcotics & psychotropic substances</li>
+            <li>• {t("cannotShipItem1")}</li>
+            <li>• {t("cannotShipItem2")}</li>
+            <li>• {t("cannotShipItem3")}</li>
+            <li>• {t("cannotShipItem4")}</li>
+            <li>• {t("cannotShipItem5")}</li>
+            <li>• {t("cannotShipItem6")}</li>
+            <li>• {t("cannotShipItem7")}</li>
           </ul>
         </div>
         <div>
           <h4 className="text-sm font-bold text-black dark:text-white mb-2">
-            Can ship with restrictions
+            {t("canShip")}
           </h4>
           <ul className="space-y-1.5 text-sm text-black/60 dark:text-white/60">
             <li>
-              • <strong>Lithium batteries</strong> — max 2 per package
+              • {t("canShipItem1")}
             </li>
             <li>
-              • <strong>Alcohol</strong> — up to 5L, proper packaging
+              • {t("canShipItem2")}
             </li>
             <li>
-              • <strong>Perfume</strong> — up to 1L, sealed original
+              • {t("canShipItem3")}
             </li>
             <li>
-              • <strong>Coffee & spices</strong> — phytosanitary cert for some
-              destinations
+              • {t("canShipItem4")}
             </li>
             <li>
-              • <strong>Electronics</strong> — original invoice required
+              • {t("canShipItem5")}
             </li>
             <li>
-              • <strong>Seeds</strong> — export permit from MoA
+              • {t("canShipItem6")}
             </li>
           </ul>
         </div>
         <p className="text-xs text-black/35 dark:text-white/35">
-          Unsure? Call{" "}
+          {t("unsure")}{" "}
           <a
             href="tel:+251111234567"
             className="text-brand-red font-medium"
           >
             +251 11 123 4567
           </a>{" "}
-          before shipping.
+          {t("beforeShipping")}
         </p>
       </div>
     </Modal>
@@ -299,75 +303,76 @@ export function ClaimModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations("Modals");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onClose();
     const ref = `CLM-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-    toast(`Claim submitted! Ref #${ref} — check your email.`);
+    toast(`${t("claimSubmitted")} Ref #${ref} — check your email.`);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="File a Claim">
+    <Modal isOpen={isOpen} onClose={onClose} title={t("claimTitle")}>
       <form onSubmit={handleSubmit} className="p-6 space-y-4">
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Tracking Number *
+            {t("claimTracking")} *
           </label>
           <input
             type="text"
             required
-            placeholder="BITA-XXXXXXXXX"
+            placeholder={t("claimTrackingPlaceholder")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors font-mono"
           />
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Issue Type *
+            {t("claimIssue")} *
           </label>
           <select
             required
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white focus:outline-none focus:border-brand-red transition-colors appearance-none cursor-pointer"
           >
-            <option value="">Select issue</option>
-            <option>Lost shipment</option>
-            <option>Damaged package</option>
-            <option>Damaged contents</option>
-            <option>Missing items</option>
-            <option>Wrong delivery</option>
-            <option>Late delivery</option>
-            <option>Other</option>
+            <option value="">{t("claimSelectIssue")}</option>
+            <option>{t("claimLost")}</option>
+            <option>{t("claimDamaged")}</option>
+            <option>{t("claimDamagedContents")}</option>
+            <option>{t("claimMissing")}</option>
+            <option>{t("claimWrongDelivery")}</option>
+            <option>{t("claimLateDelivery")}</option>
+            <option>{t("claimOther")}</option>
           </select>
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Your Email *
+            {t("claimEmail")} *
           </label>
           <input
             type="email"
             required
-            placeholder="you@email.com"
+            placeholder={t("claimEmailPlaceholder")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors"
           />
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Phone *
+            {t("claimPhone")} *
           </label>
           <input
             type="tel"
             required
-            placeholder="+251 9XX XXX XXXX"
+            placeholder={t("claimPhonePlaceholder")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors"
           />
         </div>
         <div>
           <label className="text-xs font-semibold text-black/50 dark:text-white/50 uppercase tracking-wider block mb-1.5">
-            Description *
+            {t("claimDesc")} *
           </label>
           <textarea
             rows={3}
             required
-            placeholder="Describe what happened..."
+            placeholder={t("claimDescPlaceholder")}
             className="w-full px-4 py-3 bg-black/[0.02] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-black/25 dark:placeholder-white/25 focus:outline-none focus:border-brand-red transition-colors resize-none"
           />
         </div>
@@ -375,11 +380,10 @@ export function ClaimModal({
           type="submit"
           className="w-full bg-brand-red hover:bg-brand-red-dark text-white py-3.5 font-semibold rounded-xl transition-colors text-sm"
         >
-          Submit Claim
+          {t("submitClaim")}
         </button>
         <p className="text-[11px] text-black/30 dark:text-white/30 text-center">
-          You&apos;ll receive a confirmation email with your claim reference
-          number.
+          {t("claimNote")}
         </p>
       </form>
     </Modal>
