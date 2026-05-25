@@ -15,6 +15,7 @@ import {
   ClipboardCheck,
   MapPin,
   Star,
+  Loader2,
 } from "lucide-react";
 import {
   Carousel,
@@ -28,6 +29,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 const galleryImages = [
   {
@@ -51,6 +53,56 @@ const galleryImages = [
 export function AboutPage() {
   const t = useTranslations("AboutPage");
   const [api, setApi] = useState<CarouselApi>();
+
+  const [customerName, setCustomerName] = useState("");
+  const [rating, setRating] = useState(0);
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customerName.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
+    if (rating === 0) {
+      toast.error("Please select a rating");
+      return;
+    }
+    if (!message.trim()) {
+      toast.error("Please write a message");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("https://api.bittaexpress.com/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customer_name: customerName,
+          rating: rating,
+          message: message,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit review");
+      }
+
+      toast.success("Thank you! Your review has been submitted successfully.");
+      setCustomerName("");
+      setRating(0);
+      setMessage("");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to submit review. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (!api) return;
@@ -490,13 +542,16 @@ export function AboutPage() {
                 <h3 className="text-xl font-bold text-black dark:text-white mb-6">
                   {t("writeReview")}
                 </h3>
-                <form className="space-y-5">
+                <form className="space-y-5" onSubmit={handleSubmit}>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-black/40 dark:text-white/40">
                       {t("yourName")}
                     </label>
                     <Input
                       placeholder={t("yourName")}
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      disabled={isSubmitting}
                       className="bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/10 focus:border-brand-red/50 transition-all"
                     />
                   </div>
@@ -509,9 +564,17 @@ export function AboutPage() {
                         <button
                           key={star}
                           type="button"
-                          className="text-black/20 dark:text-white/20 hover:text-brand-red transition-colors"
+                          onClick={() => setRating(star)}
+                          disabled={isSubmitting}
+                          className="text-black/20 dark:text-white/20 hover:text-brand-red transition-colors focus:outline-none"
                         >
-                          <Star className="w-6 h-6" />
+                          <Star
+                            className={`w-6 h-6 transition-all ${
+                              star <= rating
+                                ? "fill-brand-red text-brand-red scale-110"
+                                : "text-black/20 dark:text-white/20 hover:text-brand-red/70"
+                            }`}
+                          />
                         </button>
                       ))}
                     </div>
@@ -522,11 +585,25 @@ export function AboutPage() {
                     </label>
                     <Textarea
                       placeholder={t("reviewPlaceholder")}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      disabled={isSubmitting}
                       className="min-h-[120px] bg-white/50 dark:bg-black/20 border-black/5 dark:border-white/10 focus:border-brand-red/50 transition-all"
                     />
                   </div>
-                  <Button className="w-full bg-brand-red hover:bg-black dark:hover:bg-white dark:hover:text-black py-6 text-base font-bold transition-all duration-300">
-                    {t("submitReview")}
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-brand-red hover:bg-black dark:hover:bg-white dark:hover:text-black py-6 text-base font-bold transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      t("submitReview")
+                    )}
                   </Button>
                 </form>
               </div>
