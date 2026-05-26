@@ -143,7 +143,7 @@ export function RoutesSection({ onFillRoute }: { onFillRoute: (from: string, to:
     const fetchRoutes = async () => {
       try {
         setLoading(true);
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+        const baseUrl = process.env.NEXT_PUBLIC_BOOKING_API_URL;
         const response = await fetch(`${baseUrl}/routes`);
         if (!response.ok) throw new Error("Failed to fetch routes");
         const data = await response.json();
