@@ -755,50 +755,92 @@ function StarRating({ count }: { count: number }) {
   );
 }
 
+interface ReviewItem {
+  id: string;
+  customerName: string;
+  rating: number;
+  message: string;
+  isApproved: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ReviewApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    items: ReviewItem[];
+    page: number;
+    limit: number;
+    total: number;
+  };
+}
+
+const colorPool = [
+  "bg-brand-red",
+  "bg-blue-600",
+  "bg-emerald-600",
+  "bg-violet-600",
+  "bg-amber-600",
+  "bg-pink-600",
+  "bg-teal-600",
+  "bg-orange-600",
+];
+
+const hardcodedTestimonials = [
+  { nameKey: "testimonial1Name", roleKey: "testimonial1Role", initials: "MH", color: "bg-brand-red", quoteKey: "testimonial1Quote" },
+  { nameKey: "testimonial2Name", roleKey: "testimonial2Role", initials: "DB", color: "bg-blue-600", quoteKey: "testimonial2Quote" },
+  { nameKey: "testimonial3Name", roleKey: "testimonial3Role", initials: "TW", color: "bg-emerald-600", quoteKey: "testimonial3Quote" },
+  { nameKey: "testimonial4Name", roleKey: "testimonial4Role", initials: "YT", color: "bg-violet-600", quoteKey: "testimonial4Quote" },
+  { nameKey: "testimonial5Name", roleKey: "testimonial5Role", initials: "SA", color: "bg-amber-600", quoteKey: "testimonial5Quote" },
+];
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
 export function TestimonialsSection() {
   const t = useTranslations("Testimonials");
-  const testimonialsList = [
-    {
-      name: t("testimonial1Name"),
-      role: t("testimonial1Role"),
-      initials: "MH",
-      color: "bg-brand-red",
-      rating: 5,
-      quote: t("testimonial1Quote"),
-    },
-    {
-      name: t("testimonial2Name"),
-      role: t("testimonial2Role"),
-      initials: "DB",
-      color: "bg-blue-600",
-      rating: 5,
-      quote: t("testimonial2Quote"),
-    },
-    {
-      name: t("testimonial3Name"),
-      role: t("testimonial3Role"),
-      initials: "TW",
-      color: "bg-emerald-600",
-      rating: 5,
-      quote: t("testimonial3Quote"),
-    },
-    {
-      name: t("testimonial4Name"),
-      role: t("testimonial4Role"),
-      initials: "YT",
-      color: "bg-violet-600",
-      rating: 5,
-      quote: t("testimonial4Quote"),
-    },
-    {
-      name: t("testimonial5Name"),
-      role: t("testimonial5Role"),
-      initials: "SA",
-      color: "bg-amber-600",
-      rating: 5,
-      quote: t("testimonial5Quote"),
-    },
-  ];
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+    fetch(`${baseUrl}/reviews?isApproved=true`)
+      .then((res) => res.json())
+      .then((json: ReviewApiResponse) => {
+        if (json.success) {
+          setReviews(json.data.items);
+        }
+      })
+      .catch(() => {
+        // fallback to hardcoded below
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const testimonialsList = loading || reviews.length === 0
+    ? hardcodedTestimonials.map((h) => ({
+        name: t(h.nameKey),
+        role: t(h.roleKey),
+        initials: h.initials,
+        color: h.color,
+        rating: 5,
+        quote: t(h.quoteKey),
+      }))
+    : reviews.map((r, i) => ({
+        name: r.customerName,
+        role: "",
+        initials: getInitials(r.customerName),
+        color: colorPool[i % colorPool.length],
+        rating: r.rating,
+        quote: r.message,
+      }));
 
   const stats = [
     { label: t("statDeliveries"), value: "50k+" },
@@ -807,7 +849,6 @@ export function TestimonialsSection() {
   ];
   const [active, setActive] = useState(0);
   const [api, setApi] = useState<CarouselApi | null>(null);
-  const total = testimonialsList.length;
 
   useEffect(() => {
     if (!api) return;
@@ -825,6 +866,16 @@ export function TestimonialsSection() {
     }, 4500);
     return () => clearInterval(timer);
   }, [api]);
+
+  if (loading) {
+    return (
+      <section id="testimonials" className="bg-black/[0.02] dark:bg-white/[0.02] py-16 md:py-24 transition-colors duration-500 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-brand-red" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="testimonials" className="bg-black/[0.02] dark:bg-white/[0.02] py-16 md:py-24 transition-colors duration-500 overflow-hidden">
@@ -877,9 +928,11 @@ export function TestimonialsSection() {
                           <div className="text-sm font-semibold text-black dark:text-white leading-tight">
                             {te.name}
                           </div>
-                          <div className="text-[11px] text-black/35 dark:text-white/35 mt-0.5">
-                            {te.role}
-                          </div>
+                          {te.role && (
+                            <div className="text-[11px] text-black/35 dark:text-white/35 mt-0.5">
+                              {te.role}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
