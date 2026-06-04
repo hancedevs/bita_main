@@ -138,7 +138,7 @@ export function Hero({ activeTab, onSwitchTab, onOpenModal, onTrack, onProceedTo
       <div className="absolute inset-0">
         <div className="absolute inset-0 map-bg-light dark:hidden" />
         <div className="absolute inset-0 map-bg-dark hidden dark:block" />
-        <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] dark:hidden" />
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] dark:hidden" />
         <div className="absolute inset-0 bg-black/35 hidden dark:block" />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-red rounded-full blur-[200px] opacity-[0.06] dark:opacity-[0.08] pointer-events-none" />
       </div>

@@ -129,7 +129,7 @@ export function AboutPage() {
             <source src="https://assets.mixkit.co/videos/preview/mixkit-commercial-airplane-in-flight-at-sunset-10023-large.mp4" type="video/mp4" />
           </video>
           {/* Light mode: white frosted overlay */}
-          <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] dark:hidden" />
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] dark:hidden" />
           {/* Dark mode: stark contrast overlay */}
           <div className="absolute inset-0 bg-black/60 hidden dark:block" />
           {/* Subtle red radial glow */}

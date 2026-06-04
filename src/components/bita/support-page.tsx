@@ -99,7 +99,7 @@ export function SupportPage() {
           <div className="absolute inset-0 map-bg-light dark:hidden" />
           <div className="absolute inset-0 map-bg-dark hidden dark:block" />
           {/* Light mode: white frosted overlay */}
-          <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] dark:hidden" />
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] dark:hidden" />
           {/* Dark mode: reduced overlay to show map */}
           <div className="absolute inset-0 bg-black/35 hidden dark:block" />
           {/* Subtle red radial glow */}
